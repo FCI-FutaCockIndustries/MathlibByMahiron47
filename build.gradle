@@ -15,8 +15,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = '1.0.0'
-group = 'net.mahiron47.belowhorizons' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'belowhorizons'
+group = 'net.mahiron47.mathlib' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'mathlibbymahiron47' // This is the name of the jar file that will be generated, it is not the name of the mod.
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -101,10 +101,10 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "mathbymahiron47",
-            "Specification-Vendor": "Math by Mahiron47",
+            "Specification-Title": "mathlibbymahiron47",
+            "Specification-Vendor": "Mathlib by Mahiron47",
             "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
+            "Implementation-Title": project.name,  
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"Mahiron47",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
