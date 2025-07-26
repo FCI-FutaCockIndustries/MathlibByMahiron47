@@ -1,5 +1,5 @@
-package net.mahiron47.Mathlib.types;
+package net.mahiron47.mathlib.types;
 
-public class Mat3 {
-	
+public class Mat3<NumT extends Number> {
+    
 }

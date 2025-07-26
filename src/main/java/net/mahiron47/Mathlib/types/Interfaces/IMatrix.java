@@ -1,86 +1,109 @@
-package net.mahiron47.Mathlib.types.Interfaces;
+package net.mahiron47.mathlib.types.interfaces;
 
-public interface IMatrix<T extends Number & IVector> {
+public interface IMatrix<NumT extends Number,
+		VecT extends IVector<NumT, VecT, MatT>,
+		MatT extends IMatrix<NumT, VecT, MatT>> {
+	static final byte TYPE_NO_TYPE = 0b00000000;
+	static final byte TYPE_NUM_MAT = 0b00000001;
+	static final byte TYPE_VEC_MAT = 0b00000010;
+	static final byte TYPE_MAT_MAT = 0b00000100;
+
+    static final byte TYPE_ELEMENT_END = 0b00; //null type
+    static final byte TYPE_ELEMENT_NUM = 0b01;
+    static final byte TYPE_ELEMENT_VEC = 0b10;
+    static final byte TYPE_ELEMENT_MAT = 0b11;
+
 	/**
-	 * Returns the value at the specified row and column in the matrix.
-	 *
 	 * @param i the row index
 	 * @param j the column index
 	 * @return the value at the specified position
 	 */
-	T get(int i, int j);
+	Object get(int i, int j);
 
 	/**
 	 * Sets the value at the specified row and column in the matrix.
 	 *
 	 * @param i the row index
 	 * @param j the column index
-	 * @param a the value to set
+	 * @param a_ij the value to set
 	 */
-	void set(int i, int j, T a);
+	void set(int i, int j, NumT a_ij);
 
 	/**
-	 * Returns the number of rows in the matrix.
+	 * Sets the value at the specified row and column in the matrix.
 	 *
-	 * @return the number of rows
+	 * @param i the row index
+	 * @param j the column index
+	 * @param a_ij the value to set
+	 */
+	void set(int i, int j, VecT a_ij);
+
+	/**
+	 * Sets the value at the specified row and column in the matrix.
+	 *
+	 * @param i the row index
+	 * @param j the column index
+	 * @param a_ij the value to set
+	 */
+	void set(int i, int j, MatT a_ij);
+
+	/**
+	 * @return the number of rows and columns
 	 */
 	int[] getDimensions();
 
 	/**
-	 * Returns the rows in the matrix.
-	 *
-	 * @return the rows
+	 * @return the copy of this matrix
 	 */
-	T[] getRows();
+	IMatrix<NumT, VecT, MatT> copy();
 
 	/**
-	 * Returns the columns in the matrix.
-	 *
-	 * @return the columns
+	 * @return the matrix in vector form, which is a i-column vector 
 	 */
-	T[] getCols();
+	IVector<NumT, VecT, MatT> convert(int i);
 
 	/**
-	 * Returns the data of the matrix as a 2D array.
-	 *
-	 * @return the data of the matrix
-	 */
-	T[][] getData();
-
-	/**
-	 * Returns the transpose of the matrix.
-	 *
 	 * @return the transposed matrix
 	 */
-	IMatrix<T> transpose();
+	IMatrix<NumT, VecT, MatT> getTranspose();
 
 	/**
-	 * Returns the sum of matrixes.
-	 *
-	 * @return the resulting matrix
+	 * @return the length of the matrix, which is the square root of the sum of squares of all elements
 	 */
-	IMatrix<T> add(IMatrix<T> other);
+	double getLength();
 
 	/**
-	 * Returns the difference of matrixes.
-	 *
-	 * @return the resulting matrix
+	 * @return the normalized matrix, which has a length of 1 or matrix of other types which is normalized
 	 */
-	IMatrix<T> subtract(IMatrix<T> other);
+	IMatrix<Number, VecT, MatT> getNormal();
 
 	/**
-	 * Returns the product of the matrix and a scalar.
-	 *
+	 * @return the determinant of the matrix
+	 */
+	NumT getDeterminant();
+	
+	/**
+	 * @return the sum of two matrix
+	 */
+	IMatrix<NumT, VecT, MatT> add(IMatrix<NumT, VecT, MatT> other);
+
+	/**
+	 * @return the difference of two matrix
+	 */
+	IMatrix<NumT, VecT, MatT> subtract(IMatrix<NumT, VecT, MatT> other);
+
+	/**
 	 * @param scalar the scalar to multiply by
-	 * @return the resulting matrix
+	 * @return the multiplied by scalar matrix
 	 */
-	IMatrix<T> multiply(T scalar);
+	IMatrix<NumT, VecT, MatT> multiply(NumT scalar);
 
 	/**
-	 * Returns the product of this matrix and another matrix.
-	 * * @param other the matrix to multiply with
+	 * Matrix multiplication operation C<sub>ml</sub> = A<sub>mn</sub> *
+	 * B<sub>nl</sub>, where A<sub>mn</sub> is this matrix
 	 * 
-	 * @return the resulting matrix
+	 * @param other the matrix B<sub>nl</sub>
+	 * @return the C<sub>ml</sub> matrix
 	 */
-	IMatrix<T> multiply(IMatrix<T> other);
+	IMatrix<NumT, VecT, MatT> multiply(IMatrix<NumT, VecT, MatT> other);
 }

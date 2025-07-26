@@ -1,4 +1,4 @@
-package net.mahiron47.Mathlib;
+package net.mahiron47.mathlib;
 
 import net.minecraft.world.WorldType;
 import net.minecraftforge.fml.common.Mod;
