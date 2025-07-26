@@ -1,4 +1,4 @@
-package net.mahiron47.Mathlib.utils;
+package net.mahiron47.mathlib.utils;
 
 public class Interpolation {
 	private Interpolation() {

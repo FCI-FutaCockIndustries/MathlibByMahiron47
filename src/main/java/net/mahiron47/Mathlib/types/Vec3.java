@@ -1,37 +1,13 @@
-package net.mahiron47.Mathlib.types;
+package net.mahiron47.mathlib.types;
 
-public class Vec3 {
-	private double x;
-	private double y;
-	private double z;
+public class Vec3<NumT extends Number> {
+	private NumT x;
+	private NumT y;
+	private NumT z;
 
-	public Vec3(double x, double y, double z) {
+	public Vec3(NumT x, NumT y, NumT z) {
 		this.x = x;
 		this.y = y;
-		this.z = z;
-	}
-
-	public double getX() {
-		return x;
-	}
-
-	public double getY() {
-		return y;
-	}
-
-	public double getZ() {
-		return z;
-	}
-
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public void setY(double y) {
-		this.y = y;
-	}
-
-	public void setZ(double z) {
 		this.z = z;
 	}
 }
