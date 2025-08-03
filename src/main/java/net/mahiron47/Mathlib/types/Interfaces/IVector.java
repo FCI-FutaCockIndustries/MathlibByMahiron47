@@ -1,32 +1,29 @@
 package net.mahiron47.mathlib.types.interfaces;
 
-public interface IVector<NumT extends Number,
-        VecT extends IVector<NumT, VecT, MatT>,
-        MatT extends IMatrix<NumT, VecT, MatT>> {
-    static final byte TYPE_NO_TYPE = 0b00000000;
-    static final byte TYPE_NUM_VEC = 0b00000001;
-    static final byte TYPE_VEC_VEC = 0b00000010;
-    static final byte TYPE_MAT_VEC = 0b00000100;
-    static final byte TYPE_TRNSPOS = 0b00001000;
-
-    static final byte TYPE_ELEMENT_END = 0b00; //null type
-    static final byte TYPE_ELEMENT_NUM = 0b01;
-    static final byte TYPE_ELEMENT_VEC = 0b10;
-    static final byte TYPE_ELEMENT_MAT = 0b11;
+public interface IVector extends ITensor {
+    /**
+     * @param i the index
+     * @return the value at the specified index in the vector as a Integer type
+     */
+    int geti(int i);
 
     /**
      * @param i the index
-     * @return the value at the specified index in the vector
+     * @return the value at the specified index in the vector as a Long type
      */
-    Object get(int i);
+    long getl(int i);
 
     /**
-     * Sets the value at the specified index in the vector.
-     *
      * @param i the index
-     * @param a_i the value to set
+     * @return the value at the specified index in the vector as a Float type
      */
-    void set(int i, NumT a_i);
+    float getf(int i);
+
+    /**
+     * @param i the index
+     * @return the value at the specified index in the vector as a Double type
+     */
+    double getd(int i);
 
     /**
      * Sets the value at the specified index in the vector.
@@ -34,7 +31,7 @@ public interface IVector<NumT extends Number,
      * @param i the index
      * @param a_i the value to set
      */
-    void set(int i, VecT a_i);
+    void set(int i, int a_i);
 
     /**
      * Sets the value at the specified index in the vector.
@@ -42,7 +39,23 @@ public interface IVector<NumT extends Number,
      * @param i the index
      * @param a_i the value to set
      */
-    void set(int i, MatT a_i);
+    void set(int i, long a_i);
+
+    /**
+     * Sets the value at the specified index in the vector.
+     *
+     * @param i the index
+     * @param a_i the value to set
+     */
+    void set(int i, float a_i);
+
+    /**
+     * Sets the value at the specified index in the vector.
+     *
+     * @param i the index
+     * @param a_i the value to set
+     */
+    void set(int i, double a_i);
 
     /**
      * @return the dimension of the vector, which is the same as the size
@@ -52,17 +65,12 @@ public interface IVector<NumT extends Number,
     /**
      * @return a copy of this vector
      */
-    IVector<NumT, VecT, MatT> copy();
+    IVector copy();
 
     /**
      * @return the vector in matrix form
      */
-    IMatrix<NumT, VecT, MatT> convert();
-
-    /**
-     * @return the column vector from row vector and vice versa
-     */
-    IVector<NumT, VecT, MatT> getTranspose();
+    IMatrix convert();
 
     /**
      * @return the length of the vector
@@ -72,31 +80,64 @@ public interface IVector<NumT extends Number,
     /**
      * @return the normalized vector, which has a length of 1 or vector of other types which is normalized
      */
-    IVector<Number, VecT, MatT> getNormal();
+    IVector getNormal();
 
     /**
      * @return the sum of two vectors
      */
-    IVector<NumT, VecT, MatT> add(IVector<NumT, VecT, MatT> other);
+    IVector add(IVector other);
 
     /**
      * @return the difference of two vectors
      */
-    IVector<NumT, VecT, MatT> subtract(IVector<NumT, VecT, MatT> other);
+    IVector subtract(IVector other);
 
     /**
      * @param scalar the scalar to multiply by
      * @return the multiplied by scalar vector
      */
-    IVector<NumT, VecT, MatT> multiply(NumT scalar);
+    IVector multiply(int scalar);
+
+    /**
+     * @param scalar the scalar to multiply by
+     * @return the multiplied by scalar vector
+     */
+    IVector multiply(long scalar);
+
+    /**
+     * @param scalar the scalar to multiply by
+     * @return the multiplied by scalar vector
+     */
+    IVector multiply(float scalar);
+
+    /**
+     * @param scalar the scalar to multiply by
+     * @return the multiplied by scalar vector
+     */
+    IVector multiply(double scalar);
 
     /**
      * @return the dot product of two vectors
      */
-    NumT dot(IVector<NumT, VecT, MatT> other);
+    int doti(IVector other);
+
+    /**
+     * @return the dot product of two vectors
+     */
+    long dotl(IVector other);
+
+    /**
+     * @return the dot product of two vectors
+     */
+    float dotf(IVector other);
+
+    /**
+     * @return the dot product of two vectors
+     */
+    double dotd(IVector other);
 
     /**
      * @return the cross product of two vectors
      */
-    IVector<NumT, VecT, MatT> cross(IVector<NumT, VecT, MatT> other);
+    IVector cross(IVector other);
 }

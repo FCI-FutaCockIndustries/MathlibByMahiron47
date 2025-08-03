@@ -1,42 +1,33 @@
 package net.mahiron47.mathlib.types.interfaces;
 
-public interface IMatrix<NumT extends Number,
-		VecT extends IVector<NumT, VecT, MatT>,
-		MatT extends IMatrix<NumT, VecT, MatT>> {
-	static final byte TYPE_NO_TYPE = 0b00000000;
-	static final byte TYPE_NUM_MAT = 0b00000001;
-	static final byte TYPE_VEC_MAT = 0b00000010;
-	static final byte TYPE_MAT_MAT = 0b00000100;
-
-    static final byte TYPE_ELEMENT_END = 0b00; //null type
-    static final byte TYPE_ELEMENT_NUM = 0b01;
-    static final byte TYPE_ELEMENT_VEC = 0b10;
-    static final byte TYPE_ELEMENT_MAT = 0b11;
+public interface IMatrix extends ITensor {
+	/**
+	 * @param i the row index
+	 * @param j the column index
+	 * @return the value at the specified position in the matrix as a Integer type
+	 */
+	int geti(int i, int j);
 
 	/**
 	 * @param i the row index
 	 * @param j the column index
-	 * @return the value at the specified position
+	 * @return the value at the specified position in the matrix as a Long type
 	 */
-	Object get(int i, int j);
+	long getl(int i, int j);
 
 	/**
-	 * Sets the value at the specified row and column in the matrix.
-	 *
 	 * @param i the row index
 	 * @param j the column index
-	 * @param a_ij the value to set
+	 * @return the value at the specified position in the matrix as a Float type
 	 */
-	void set(int i, int j, NumT a_ij);
+	float getf(int i, int j);
 
 	/**
-	 * Sets the value at the specified row and column in the matrix.
-	 *
 	 * @param i the row index
 	 * @param j the column index
-	 * @param a_ij the value to set
+	 * @return the value at the specified position in the matrix as a Double type
 	 */
-	void set(int i, int j, VecT a_ij);
+	double getd(int i, int j);
 
 	/**
 	 * Sets the value at the specified row and column in the matrix.
@@ -45,7 +36,34 @@ public interface IMatrix<NumT extends Number,
 	 * @param j the column index
 	 * @param a_ij the value to set
 	 */
-	void set(int i, int j, MatT a_ij);
+	void set(int i, int j, int a_ij);
+
+	/**
+	 * Sets the value at the specified row and column in the matrix.
+	 *
+	 * @param i the row index
+	 * @param j the column index
+	 * @param a_ij the value to set
+	 */
+	void set(int i, int j, long a_ij);
+
+	/**
+	 * Sets the value at the specified row and column in the matrix.
+	 *
+	 * @param i the row index
+	 * @param j the column index
+	 * @param a_ij the value to set
+	 */
+	void set(int i, int j, float a_ij);
+
+	/**
+	 * Sets the value at the specified row and column in the matrix.
+	 *
+	 * @param i the row index
+	 * @param j the column index
+	 * @param a_ij the value to set
+	 */
+	void set(int i, int j, double a_ij);
 
 	/**
 	 * @return the number of rows and columns
@@ -55,55 +73,77 @@ public interface IMatrix<NumT extends Number,
 	/**
 	 * @return the copy of this matrix
 	 */
-	IMatrix<NumT, VecT, MatT> copy();
+	IMatrix copy();
 
 	/**
 	 * @return the matrix in vector form, which is a i-column vector 
 	 */
-	IVector<NumT, VecT, MatT> convert(int i);
+	IVector convert(int i);
 
 	/**
 	 * @return the transposed matrix
 	 */
-	IMatrix<NumT, VecT, MatT> getTranspose();
+	IMatrix getTranspose();
 
 	/**
-	 * @return the length of the matrix, which is the square root of the sum of squares of all elements
+	 * @return the determinant of the matrix as an Integer type
 	 */
-	double getLength();
+	int deti();
 
 	/**
-	 * @return the normalized matrix, which has a length of 1 or matrix of other types which is normalized
+	 * @return the determinant of the matrix as a Long type
 	 */
-	IMatrix<Number, VecT, MatT> getNormal();
+	long detl();
 
 	/**
-	 * @return the determinant of the matrix
+	 * @return the determinant of the matrix as a Float type
 	 */
-	NumT getDeterminant();
+	float detf();
+
+	/**
+	 * @return the determinant of the matrix as a Double type
+	 */
+	double detd();
 	
 	/**
 	 * @return the sum of two matrix
 	 */
-	IMatrix<NumT, VecT, MatT> add(IMatrix<NumT, VecT, MatT> other);
+	IMatrix add(IMatrix other);
 
 	/**
 	 * @return the difference of two matrix
 	 */
-	IMatrix<NumT, VecT, MatT> subtract(IMatrix<NumT, VecT, MatT> other);
+	IMatrix subtract(IMatrix other);
 
 	/**
 	 * @param scalar the scalar to multiply by
 	 * @return the multiplied by scalar matrix
 	 */
-	IMatrix<NumT, VecT, MatT> multiply(NumT scalar);
+	IMatrix multiply(int scalar);
 
 	/**
-	 * Matrix multiplication operation C<sub>ml</sub> = A<sub>mn</sub> *
-	 * B<sub>nl</sub>, where A<sub>mn</sub> is this matrix
-	 * 
-	 * @param other the matrix B<sub>nl</sub>
-	 * @return the C<sub>ml</sub> matrix
+	 * @param scalar the scalar to multiply by
+	 * @return the multiplied by scalar matrix
 	 */
-	IMatrix<NumT, VecT, MatT> multiply(IMatrix<NumT, VecT, MatT> other);
+	IMatrix multiply(long scalar);
+
+	/**
+	 * @param scalar the scalar to multiply by
+	 * @return the multiplied by scalar matrix
+	 */
+	IMatrix multiply(float scalar);
+
+	/**
+	 * @param scalar the scalar to multiply by
+	 * @return the multiplied by scalar matrix
+	 */
+	IMatrix multiply(double scalar);
+
+	/**
+	 * Matrix multiplication operation C_mk = A_mn &times; B_nk, where A_mn is this matrix.
+	 * 
+	 * @param other the matrix B_nk
+	 * @return the C_mk matrix
+	 */
+	IMatrix multiply(IMatrix other);
 }

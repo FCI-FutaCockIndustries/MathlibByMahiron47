@@ -1,880 +1,672 @@
 package net.mahiron47.mathlib.types;
 
-import net.mahiron47.mathlib.types.interfaces.IMatrix;
+import net.mahiron47.mathlib.types.interfaces.ITensor;
 import net.mahiron47.mathlib.types.interfaces.IVector;
 
-public class Vec<
-    NumT extends Number, 
-    VecT extends IVector<NumT, VecT, MatT>,
-    MatT extends IMatrix<NumT, VecT, MatT>
-> implements IVector<NumT, VecT, MatT> {
-    private Object[] data;
-    /**
-     * The every elements data type :
-     * <ul>
-     * <li>{@code 0b00} - first type bits</li>
-     * <li>{@code 00} - second type bits</li>
-     * <li>{@code 00} - third type bits</li>
-     * <li>{@code 00} - fourth type bits</li>
-     * </ul>
-     * The types are defined as follows :
-     * <ul>
-     * <li>{@code 0b00} - null</li>
-     * <li>{@code 0b01} - NumT</li>
-     * <li>{@code 0b10} - VecT</li>
-     * <li>{@code 0b11} - MatT</li>
-     * </ul>
-     * null bits is used to indicate end of the data type list
-     */
-    private byte[] quadro_data_type;
-    /**
-     * Type of the vector :
-     * <ul>
-     * <li>{@code 0b00000000}: TYPE_NO_TYPE</li>
-     * <li>{@code 0b00000001}: TYPE_NUM_VEC</li>
-     * <li>{@code 0b00000010}: TYPE_VEC_VEC</li>
-     * <li>{@code 0b00000100}: TYPE_MAT_VEC</li>
-     * <li>{@code 0b00001000}: TYPE_TRNSPOS</li>
-     * </ul>
-     */
-    private byte type;
+public class Vec implements IVector {
+    private final int[]    Idata;
+    private final long[]   Ldata;
+    private final float[]  Fdata;
+    private final double[] Ddata;
+    private final byte     type ;
 
-    @SuppressWarnings("unchecked")
-    public Vec(NumT... data) {
-        assert data != null : "Vec:constructor1: data cannot be null";
+    public Vec(int... data) {
+        assert data != null : "Vec:constructor:data == null";
+        assert data.length > 0 : "Vec:constructor:data.length == 0";
 
-        this.data = new Object[data.length];
-        this.quadro_data_type = new byte[(data.length + 3) / 4]; // optimization of Math.ceil and float division
+        this.Idata = new int[data.length];
         for (int i = 0; i < data.length; i++) {
-            assert data[i] != null : "Vec:constructor1: data element cannot be null";
-            
-            this.data[i] = (Object) data[i];
-
-            switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_NUM;
-                break;
-            }
+            this.Idata[i] = data[i];
         }
-        this.type = IVector.TYPE_NUM_VEC;
+        this.Ldata = null;
+        this.Fdata = null;
+        this.Ddata = null;
+        this.type = ITensor.TYPE_INT;
     }
 
-    public Vec(NumT[] data, boolean transposed) {
-        assert data != null : "Vec:constructor2: data cannot be null";
+    public Vec(long... data) {
+        assert data != null : "Vec:constructor:data == null";
+        assert data.length > 0 : "Vec:constructor:data.length == 0";
 
-        this.data = new Object[data.length];
-        this.quadro_data_type = new byte[(data.length + 3) / 4]; // optimization of Math.ceil and float division
+        this.Idata = null;
+        this.Ldata = new long[data.length];
         for (int i = 0; i < data.length; i++) {
-            assert data[i] != null : "Vec:constructor2: data element cannot be null";
-            
-            this.data[i] = (Object) data[i];
-
-            switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_NUM;
-                break;
-            }
+            this.Ldata[i] = data[i];
         }
-        this.type = IVector.TYPE_NUM_VEC;
-        if (transposed) {
-            this.type |= IVector.TYPE_TRNSPOS;
-        }
+        this.Fdata = null;
+        this.Ddata = null;
+        this.type = ITensor.TYPE_LONG;
     }
 
-    @SuppressWarnings("unchecked")
-    public Vec(VecT... data) {
-        assert data != null : "Vec:constructor3: data cannot be null";
+    public Vec(float... data) {
+        assert data != null : "Vec:constructor:data == null";
+        assert data.length > 0 : "Vec:constructor:data.length == 0";
 
-        this.data = new Object[data.length];
-        this.quadro_data_type = new byte[(data.length + 3) / 4]; // optimization of Math.ceil and float division
+        this.Idata = null;
+        this.Ldata = null;
+        this.Fdata = new float[data.length];
         for (int i = 0; i < data.length; i++) {
-            assert data[i] != null : "Vec:constructor3: data element cannot be null";
-            
-            this.data[i] = (Object) data[i];
-
-            switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_VEC;
-                break;
-            }
+            this.Fdata[i] = data[i];
         }
-        this.type = IVector.TYPE_VEC_VEC;
+        this.Ddata = null;
+        this.type = ITensor.TYPE_FLOAT;
     }
 
-    public Vec(VecT[] data, boolean transposed) {
-        assert data != null : "Vec:constructor4: data cannot be null";
+    public Vec(double... data) {
+        assert data != null : "Vec:constructor:data == null";
+        assert data.length > 0 : "Vec:constructor:data.length == 0";
 
-        this.data = new Object[data.length];
-        this.quadro_data_type = new byte[(data.length + 3) / 4]; // optimization of Math.ceil and float division
+        this.Idata = null;
+        this.Ldata = null;
+        this.Fdata = null;
+        this.Ddata = new double[data.length];
         for (int i = 0; i < data.length; i++) {
-            assert data[i] != null : "Vec:constructor4: data element cannot be null";
-            
-            this.data[i] = (Object) data[i];
-
-            switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_VEC;
-                break;
-            }
+            this.Ddata[i] = data[i];
         }
-        this.type = IVector.TYPE_VEC_VEC;
-        if (transposed) {
-            this.type |= IVector.TYPE_TRNSPOS;
-        }
+        this.type = ITensor.TYPE_DOUBLE;
     }
 
-    @SuppressWarnings("unchecked")
-    public Vec(MatT... data) {
-        assert data != null : "Vec:constructor5: data cannot be null";
+    public Vec(int[] data, byte type) {
+        assert data != null : "Vec:constructor:data == null";
+        assert data.length > 0 : "Vec:constructor:data.length == 0";
+        assert type != ITensor.TYPE_NULL : "Vec:constructor:type == ITensor.TYPE_NULL";
 
-        this.data = new Object[data.length];
-        this.quadro_data_type = new byte[(data.length + 3) / 4]; // optimization of Math.ceil and float division
-        for (int i = 0; i < data.length; i++) {
-            this.data[i] = (Object) data[i];
-
-            assert data[i] != null : "Vec:constructor5: data element cannot be null";
-
-            switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_MAT;
-                break;
+        switch (type) {
+        case ITensor.TYPE_INT:
+            this.Idata = new int[data.length];
+            for (int i = 0; i < data.length; i++) {
+                this.Idata[i] = (int) data[i];
             }
+            this.Ldata = null;
+            this.Fdata = null;
+            this.Ddata = null;
+            break;
+        default:
+            throw new IllegalArgumentException("Vec:constructor:type is not supported: " + type);
         }
-        this.type = IVector.TYPE_MAT_VEC;
+
+        this.type = type;
     }
 
-    public Vec(MatT[] data, boolean transposed) {
-        assert data != null : "Vec:constructor6: data cannot be null";
+    public Vec(long[] data, byte type) {
+        assert data != null : "Vec:constructor:data == null";
+        assert data.length > 0 : "Vec:constructor:data.length == 0";
+        assert type != ITensor.TYPE_NULL : "Vec:constructor:type == ITensor.TYPE_NULL";
 
-        this.data = new Object[data.length];
-        this.quadro_data_type = new byte[(data.length + 3) / 4]; // optimization of Math.ceil and float division
-        for (int i = 0; i < data.length; i++) {
-            this.data[i] = (Object) data[i];
-
-            assert data[i] != null : "Vec:constructor6: data element cannot be null";
-
-            switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_MAT;
-                break;
+        switch (type) {
+        case ITensor.TYPE_INT:
+            this.Idata = new int[data.length];
+            for (int i = 0; i < data.length; i++) {
+                this.Idata[i] = (int) data[i];
             }
+            this.Ldata = null;
+            this.Fdata = null;
+            this.Ddata = null;
+            break;
+        case ITensor.TYPE_LONG:
+            this.Idata = null;
+            this.Ldata = new long[data.length];
+            for (int i = 0; i < data.length; i++) {
+                this.Ldata[i] = data[i];
+            }
+            this.Fdata = null;
+            this.Ddata = null;
+            break;
+        default:
+            throw new IllegalArgumentException("Vec:constructor:type is not supported: " + type);
         }
-        this.type = IVector.TYPE_MAT_VEC;
-        if (transposed) {
-            this.type |= IVector.TYPE_TRNSPOS;
-        }
+
+        this.type = type;
     }
 
-    public Vec(NumT[] NumD, VecT[] VecD, MatT[] MatD) {
-        assert NumD != null || VecD != null || MatD != null : "Vec:constructor7: at least one data array must be non-null";
+    public Vec(float[] data, byte type) {
+        assert data != null : "Vec:constructor:data == null";
+        assert data.length > 0 : "Vec:constructor:data.length == 0";
+        assert type != ITensor.TYPE_NULL : "Vec:constructor:type == ITensor.TYPE_NULL";
 
-        int size = NumD.length + VecD.length + MatD.length;
-        this.data = new Object[size];
-        this.quadro_data_type = new byte[(size + 3) / 4]; // optimization of Math.ceil and float division
-        int index = 0;
-        if (NumD != null) {
-            for (NumT num : NumD) {
-                assert num != null : "Vec:constructor7: NumD element cannot be null";
-                
-                this.data[index++] = (Object) num;
-
-                switch (index % 4) {
-                case 0:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_NUM << 6);
-                    break;
-                case 1:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_NUM << 4);
-                    break;
-                case 2:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_NUM << 2);
-                    break;
-                case 3:
-                    this.quadro_data_type[index / 4] |= IVector.TYPE_ELEMENT_NUM;
-                    break;
-                }
+        switch (type) {
+        case ITensor.TYPE_FLOAT:
+            this.Idata = null;
+            this.Ldata = null;
+            this.Fdata = new float[data.length];
+            for (int i = 0; i < data.length; i++) {
+                this.Fdata[i] = (float) data[i];
             }
-            this.type |= IVector.TYPE_NUM_VEC;
+            this.Ddata = null;
+            break;
+        default:
+            throw new IllegalArgumentException("Vec:constructor:type is not supported: " + type);
         }
-        if (VecD != null) {
-            for (VecT vec : VecD) {
-                assert vec != null : "Vec:constructor7: VecD element cannot be null";
-                
-                this.data[index++] = (Object) vec;
-
-                switch (index % 4) {
-                case 0:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_VEC << 6);
-                    break;
-                case 1:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_VEC << 4);
-                    break;
-                case 2:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_VEC << 2);
-                    break;
-                case 3:
-                    this.quadro_data_type[index / 4] |= IVector.TYPE_ELEMENT_VEC;
-                    break;
-                }
-            }
-            this.type |= IVector.TYPE_VEC_VEC;
-        }
-        if (MatD != null) {
-            for (MatT mat : MatD) {
-                assert mat != null : "Vec:constructor7: MatD element cannot be null";
-                
-                this.data[index++] = (Object) mat;
-
-                switch (index % 4) {
-                case 0:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_MAT << 6);
-                    break;
-                case 1:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_MAT << 4);
-                    break;
-                case 2:
-                    this.quadro_data_type[index / 4] |= (IVector.TYPE_ELEMENT_MAT << 2);
-                    break;
-                case 3:
-                    this.quadro_data_type[index / 4] |= IVector.TYPE_ELEMENT_MAT;
-                    break;
-                }
-            }
-            this.type |= IVector.TYPE_MAT_VEC;
-        }
+        this.type = type;
     }
 
-    public Vec(Object[] data) {
-        this(data, null, IVector.TYPE_NO_TYPE);
-    }
+    public Vec(double[] data, byte type) {
+        assert data != null : "Vec:constructor:data == null";
+        assert data.length > 0 : "Vec:constructor:data.length == 0";
+        assert type != ITensor.TYPE_NULL : "Vec:constructor:type == ITensor.TYPE_NULL";
 
-    public Vec(Object[] data, byte[] quadro_data_type, byte type) {
-        assert data != null : "Vec:constructor8: data cannot be null";
-        
-        this.data = data;
-        
-        if (type == IVector.TYPE_NO_TYPE || quadro_data_type == null) {
-            setProperlyType();
-        } else {
-            this.quadro_data_type = quadro_data_type;
-            this.type = type;
-        }
-    }
-
-    private void setProperlyType() {
-        this.quadro_data_type = new byte[(data.length + 3) / 4]; // optimization of Math.ceil and float division
-        for (int i = 0; i < data.length; i++) {
-            byte flag = IVector.TYPE_ELEMENT_END; // null type
-            if (data[i] instanceof Number) {
-                flag = IVector.TYPE_ELEMENT_NUM;
-                this.type |= IVector.TYPE_NUM_VEC;
-            } else if (data[i] instanceof IVector) {
-                flag = IVector.TYPE_ELEMENT_VEC;
-                this.type |= IVector.TYPE_VEC_VEC;
-            } else if (data[i] instanceof IMatrix) {
-                flag = IVector.TYPE_ELEMENT_MAT;
-                this.type |= IVector.TYPE_MAT_VEC;
+        switch (type) {
+        case ITensor.TYPE_FLOAT:
+            this.Idata = null;
+            this.Ldata = null;
+            this.Fdata = new float[data.length];
+            for (int i = 0; i < data.length; i++) {
+                this.Fdata[i] = (float) data[i];
             }
-            switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (flag << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (flag << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (flag << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= flag;
-                break;
+            this.Ddata = null;
+            break;
+        case ITensor.TYPE_DOUBLE:
+            this.Idata = null;
+            this.Ldata = null;
+            this.Fdata = null;
+            this.Ddata = new double[data.length];
+            for (int i = 0; i < data.length; i++) {
+                this.Ddata[i] = data[i];
             }
+            break;
+        default:
+            throw new IllegalArgumentException("Vec:constructor:type is not supported: " + type);
         }
+        this.type = type;
     }
 
     @Override
-    public Object get(int i) {
-        assert i >= 0 && i < data.length : "Vec:get: index out of bounds";
+    public int geti(int i) {
+        assert i >= 0 && i < Idata.length : "Vec:get:i out of bounds";
+        assert Idata != null : "Vec:get:Idata == null";
 
-        return this.data[i];
+        return Idata[i];
     }
 
     @Override
-    public void set(int i, NumT a_i) {
-        assert i >= 0 && i < data.length : "Vec:set: index out of bounds";
-        assert a_i != null : "Vec:set: value cannot be null";
+    public long getl(int i) {
+        assert i >= 0 && i < Ldata.length : "Vec:getl:i out of bounds";
+        assert Ldata != null : "Vec:getl:Ldata == null";
 
-        this.data[i] = a_i;
-
-        switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_NUM << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_NUM;
-                break;
-        }
-
-        this.type = IVector.TYPE_NUM_VEC;
+        return Ldata[i];
     }
 
     @Override
-    public void set(int i, VecT a_i) {
-        assert i >= 0 && i < data.length : "Vec:set: index out of bounds";
-        assert a_i != null : "Vec:set: value cannot be null";
+    public float getf(int i) {
+        assert i >= 0 && i < Fdata.length : "Vec:getf:i out of bounds";
+        assert Fdata != null : "Vec:getf:Fdata == null";
 
-        this.data[i] = a_i;
-
-        switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_VEC << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_VEC;
-                break;
-        }
-
-        this.type = IVector.TYPE_VEC_VEC;
+        return Fdata[i];
     }
 
     @Override
-    public void set(int i, MatT a_i) {
-        assert i >= 0 && i < data.length : "Vec:set: index out of bounds";
-        assert a_i != null : "Vec:set: value cannot be null";
+    public double getd(int i) {
+        assert i >= 0 && i < Ddata.length : "Vec:getd:i out of bounds";
+        assert Ddata != null : "Vec:getd:Ddata == null";
 
-        this.data[i] = a_i;
+        return Ddata[i];
+    }
 
-        switch (i % 4) {
-            case 0:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 6);
-                break;
-            case 1:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 4);
-                break;
-            case 2:
-                this.quadro_data_type[i / 4] |= (IVector.TYPE_ELEMENT_MAT << 2);
-                break;
-            case 3:
-                this.quadro_data_type[i / 4] |= IVector.TYPE_ELEMENT_MAT;
-                break;
-        }
+    @Override
+    public void set(int i, int a_i) {
+        assert i >= 0 && i < Idata.length : "Vec:set:i out of bounds";
+        assert Idata != null : "Vec:set:Idata == null";
 
-        this.type = IVector.TYPE_MAT_VEC;
+        Idata[i] = a_i;
+    }
+
+    @Override
+    public void set(int i, long a_i) {
+        assert i >= 0 && i < Ldata.length : "Vec:set:i out of bounds";
+        assert Ldata != null : "Vec:set:Ldata == null";
+
+        Ldata[i] = a_i;
+    }
+
+    @Override
+    public void set(int i, float a_i) {
+        assert i >= 0 && i < Fdata.length : "Vec:set:i out of bounds";
+        assert Fdata != null : "Vec:set:Fdata == null";
+
+        Fdata[i] = a_i;
+    }
+
+    @Override
+    public void set(int i, double a_i) {
+        assert i >= 0 && i < Ddata.length : "Vec:set:i out of bounds";
+        assert Ddata != null : "Vec:set:Ddata == null";
+
+        Ddata[i] = a_i;
     }
 
     @Override
     public int getDimension() {
-        return data.length;
-    }
+        switch (this.type) {
+        case ITensor.TYPE_INT:
+            assert Idata != null : "Vec:getDimension:Idata == null";
 
-    @Override
-    public Vec<NumT, VecT, MatT> copy() {
-        return (Vec<NumT, VecT, MatT>) new Vec<NumT, VecT, MatT>(
-            this.data, 
-            this.quadro_data_type, 
-            this.type
-        );
-    }
+            return Idata.length;
+        case ITensor.TYPE_LONG:
+            assert Ldata != null : "Vec:getDimension:Ldata == null";
 
-    @Override
-    public IMatrix<NumT, VecT, MatT> convert() {
-        Object[][] matrixData;
-        byte[][] quadroDataType;
-        if (this.type == IVector.TYPE_TRNSPOS) {
-            matrixData = new Object[data.length][1];
-            quadroDataType = new byte[data.length][1];
-            for (int i = 0; i < this.data.length; i++) {
-                matrixData[i][0] = this.data[i];
-                quadroDataType[i][0] = this.quadro_data_type[i];
-            }
-        } else {
-            matrixData = new Object[1][data.length];
-            quadroDataType = new byte[1][data.length];
-            for (int i = 0; i < this.data.length; i++) {
-                matrixData[0][i] = this.data[i];
-                quadroDataType[0][i] = this.quadro_data_type[i];
-            }
+            return Ldata.length;
+        case ITensor.TYPE_FLOAT:
+            assert Fdata != null : "Vec:getDimension:Fdata == null";
+
+            return Fdata.length;
+        case ITensor.TYPE_DOUBLE:
+            assert Ddata != null : "Vec:getDimension:Ddata == null";
+
+            return Ddata.length;
+        default:
+            throw new IllegalArgumentException("Vec:getDimension:type is not supported: " + this.type);
         }
-        return (IMatrix<NumT, VecT, MatT>) new Mat<NumT, VecT, MatT>(
-            matrixData, 
-            quadroDataType, 
-            (byte) (this.type & (IMatrix.TYPE_NUM_MAT | IMatrix.TYPE_VEC_MAT | IMatrix.TYPE_MAT_MAT))
-        );
     }
 
     @Override
-    public Vec<NumT, VecT, MatT> getTranspose() {
-        return (Vec<NumT, VecT, MatT>) new Vec<NumT, VecT, MatT>(
-            this.data, 
-            this.quadro_data_type, 
-            (byte) (this.type | IVector.TYPE_TRNSPOS)
-        );
+    public Vec copy() {
+        switch (this.type) {
+        case ITensor.TYPE_INT:
+            return new Vec(Idata.clone(), this.type);
+        case ITensor.TYPE_LONG:
+            return new Vec(Ldata.clone(), this.type);
+        case ITensor.TYPE_FLOAT:
+            return new Vec(Fdata.clone(), this.type);
+        case ITensor.TYPE_DOUBLE:
+            return new Vec(Ddata.clone(), this.type);
+        default:
+            throw new IllegalArgumentException("Vec:copy:type is not supported: " + this.type);
+        }
+    }
+
+    @Override
+    public Mat convert() {
+        switch (this.type) {
+        case ITensor.TYPE_INT:
+            assert Idata != null : "Vec:convert:Idata == null";
+            assert Idata.length > 0 : "Vec:convert:Idata.length == 0";
+
+            int[][] intMatrixData = new int[Idata.length][1];
+            for (int i = 0; i < Idata.length; i++) {
+                intMatrixData[i][0] = Idata[i];
+            }
+
+            return new Mat(intMatrixData, this.type);
+        case ITensor.TYPE_LONG:
+            assert Ldata != null : "Vec:convert:Ldata == null";
+            assert Ldata.length > 0 : "Vec:convert:Ldata.length == 0";
+
+            long[][] longMatrixData = new long[Ldata.length][1];
+            for (int i = 0; i < Ldata.length; i++) {
+                longMatrixData[i][0] = Ldata[i];
+            }
+
+            return new Mat(longMatrixData, this.type);
+        case ITensor.TYPE_FLOAT:
+            assert Fdata != null : "Vec:convert:Fdata == null";
+            assert Fdata.length > 0 : "Vec:convert:Fdata.length == 0";
+
+            float[][] floatMatrixData = new float[Fdata.length][1];
+            for (int i = 0; i < Fdata.length; i++) {
+                floatMatrixData[i][0] = Fdata[i];
+            }
+
+            return new Mat(floatMatrixData, this.type);
+        case ITensor.TYPE_DOUBLE:
+            assert Ddata != null : "Vec:convert:Ddata == null";
+            assert Ddata.length > 0 : "Vec:convert:Ddata.length == 0";
+
+            double[][] doubleMatrixData = new double[Ddata.length][1];
+            for (int i = 0; i < Ddata.length; i++) {
+                doubleMatrixData[i][0] = Ddata[i];
+            }
+
+            return new Mat(doubleMatrixData, this.type);
+        default:
+            throw new IllegalArgumentException("Vec:convert:type is not supported: " + this.type);
+        }
     }
 
     @Override
     public double getLength() {
-        double length = 0;
+        double sum = 0.0;
 
-        switch (this.type & (IVector.TYPE_NUM_VEC | IVector.TYPE_VEC_VEC | IVector.TYPE_MAT_VEC)) {
-        case IVector.TYPE_NO_TYPE:
-            setProperlyType();
-            return this.getLength(); // recursive call to ensure proper type is set
-        case IVector.TYPE_NUM_VEC:
-            for (Object value : data) {
-                assert value instanceof Number : "Vec:getLength: data type mismatch";
+        switch (this.type) {
+        case ITensor.TYPE_INT:
+            assert Idata != null : "Vec:getLength:Idata == null";
 
-                length += Math.pow(((Number) value).doubleValue(), 2);
+            for (int value : Idata) {
+                sum += value * value;
+            }
+            break;
+        case ITensor.TYPE_LONG:
+            assert Ldata != null : "Vec:getLength:Ldata == null";
+
+            for (long value : Ldata) {
+                sum += value * value;
+            }
+            break;
+        case ITensor.TYPE_FLOAT:
+            assert Fdata != null : "Vec:getLength:Fdata == null";
+
+            for (float value : Fdata) {
+                sum += value * value;
+            }
+            break;
+        case ITensor.TYPE_DOUBLE:
+            assert Ddata != null : "Vec:getLength:Ddata == null";
+
+            for (double value : Ddata) {
+                sum += value * value;
             }
             break;
         default:
-            throw new UnsupportedOperationException("Vec:getLength - vector of vectors or matrix vector not supported");
+            throw new IllegalArgumentException("Vec:getLength:type is not supported: " + this.type);
         }
 
-        return Math.sqrt(length);
+        return Math.sqrt(sum);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Vec<Number, VecT, MatT> getNormal() {
-        Object[] newData = new Object[data.length];
-        switch(this.type & (IVector.TYPE_NUM_VEC | IVector.TYPE_VEC_VEC | IVector.TYPE_MAT_VEC)) {
-            case IVector.TYPE_NO_TYPE:
-                setProperlyType();
-                return this.getNormal(); // recursive call to ensure proper type is set
-            case IVector.TYPE_NUM_VEC:
-                double length = this.getLength();
-                
-                assert length != 0 : "Vec:getNormal: length cannot be zero";
-                
-                for (int i = 0; i < data.length; i++) {
-                    assert data[i] instanceof Number : "Vec:getNormal: data type mismatch";
-                
-                    newData[i] = ((Number) data[i]).doubleValue() / length;
-                }
-                return new Vec<Number, VecT, MatT>(
-                    newData, 
-                    this.quadro_data_type, 
-                    IVector.TYPE_NUM_VEC
-                );
-            case IVector.TYPE_VEC_VEC:
-                for (int i = 0; i < data.length; i++) {
-                    assert data[i] instanceof IVector : "Vec:getNormal: data type mismatch";
+    public Vec getNormal() {
+        double length = getLength();
+        assert length != 0 : "Vec:getNormal:length == 0, cannot normalize a zero vector";
+    
+        switch (this.type) {
+        case ITensor.TYPE_INT:
+            assert Idata != null : "Vec:getNormal:Idata == null";
 
-                    newData[i] = ((IVector<NumT, VecT, MatT>) data[i]).getNormal();    
-                }
-                return new Vec<Number, VecT, MatT>(
-                    newData, 
-                    this.quadro_data_type, 
-                    IVector.TYPE_VEC_VEC
-                );
-            case IVector.TYPE_MAT_VEC:
-                for (int i = 0; i < data.length; i++) {
-                    assert data[i] instanceof IMatrix : "Vec:getNormal: data type mismatch";
+            int[] intNormalData = new int[Idata.length];
 
-                    newData[i] = ((IMatrix<NumT, VecT, MatT>) data[i]).getNormal();    
-                }
-                return new Vec<Number, VecT, MatT>(
-                    newData, 
-                    this.quadro_data_type, 
-                    IVector.TYPE_MAT_VEC
-                );
-            default:
-                throw new IllegalStateException("Vec:getNormal");
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Vec<NumT, VecT, MatT> add(IVector<NumT, VecT, MatT> other) {
-        Vec<NumT, VecT, MatT> resVec;
-        switch (this.type & (IVector.TYPE_NUM_VEC | IVector.TYPE_VEC_VEC | IVector.TYPE_MAT_VEC)) {
-        case IVector.TYPE_NO_TYPE:
-            setProperlyType();
-            return this.add(other); // recursive call to ensure proper type is set
-        case IVector.TYPE_NUM_VEC:
-            if (this.getDimension() >= other.getDimension()) {
-                resVec = (Vec<NumT, VecT, MatT>) this.copy();
-                for (int i = 0; i < other.getDimension(); i++) {
-                    assert this.data[i] instanceof Number : "Vec:add: data type mismatch";
-
-                    resVec.set(i, (NumT) (Double) (((Number) this.data[i]).doubleValue()
-                            + ((Number) other.get(i)).doubleValue()));
-                }
-            } else {
-                resVec = (Vec<NumT, VecT, MatT>) other.copy();
-                for (int i = 0; i < this.data.length; i++) {
-                    assert this.data[i] instanceof Number : "Vec:add: data type mismatch";
-
-                    resVec.set(i, (NumT) (Double) (((Number) this.data[i]).doubleValue()
-                            + ((Number) other.get(i)).doubleValue()));
-                }
+            for (int i = 0; i < Idata.length; i++) {
+                intNormalData[i] = (int) (Idata[i] / length);
             }
-            break;
-        case IVector.TYPE_VEC_VEC:
-            if (this.getDimension() >= other.getDimension()) {
-                resVec = (Vec<NumT, VecT, MatT>) this.copy();
-                for (int i = 0; i < other.getDimension(); i++) {
-                    assert this.data[i] instanceof IVector : "Vec:add: data type mismatch";
 
-                    resVec.set(i, (VecT) ((IVector<NumT, VecT, MatT>) this.data[i])
-                            .add((IVector<NumT, VecT, MatT>) other.get(i)));
-                }
-            } else {
-                resVec = (Vec<NumT, VecT, MatT>) other.copy();
-                for (int i = 0; i < this.data.length; i++) {
-                    assert this.data[i] instanceof IVector : "Vec:add: data type mismatch";
+            return new Vec(intNormalData, this.type);
+        case ITensor.TYPE_LONG:
+            assert Ldata != null : "Vec:getNormal:Ldata == null";
 
-                    resVec.set(i, (VecT) ((IVector<NumT, VecT, MatT>) this.data[i])
-                            .add((IVector<NumT, VecT, MatT>) other.get(i)));
-                }
+            long[] longNormalData = new long[Ldata.length];
+
+            for (int i = 0; i < Ldata.length; i++) {
+                longNormalData[i] = (long) (Ldata[i] / length);
             }
-            break;
-        case IVector.TYPE_MAT_VEC:
-            if (this.getDimension() >= other.getDimension()) {
-                resVec = (Vec<NumT, VecT, MatT>) this.copy();
-                for (int i = 0; i < other.getDimension(); i++) {
-                    assert this.data[i] instanceof IMatrix : "Vec:add: data type mismatch";
+            
+            return new Vec(longNormalData, this.type);
+        case ITensor.TYPE_FLOAT:
+            assert Fdata != null : "Vec:getNormal:Fdata == null";
 
-                    resVec.set(i, (MatT) ((IMatrix<NumT, VecT, MatT>) this.data[i])
-                            .add((IMatrix<NumT, VecT, MatT>) other.get(i)));
-                }
-            } else {
-                resVec = (Vec<NumT, VecT, MatT>) other.copy();
-                for (int i = 0; i < this.data.length; i++) {
-                    assert this.data[i] instanceof IMatrix : "Vec:add: data type mismatch";
+            float[] floatNormalData = new float[Fdata.length];
 
-                    resVec.set(i, (MatT) ((IMatrix<NumT, VecT, MatT>) this.data[i])
-                            .add((IMatrix<NumT, VecT, MatT>) other.get(i)));
-                }
+            for (int i = 0; i < Fdata.length; i++) {
+                floatNormalData[i] = (float) (Fdata[i] / length);
             }
-            break;
+
+            return new Vec(floatNormalData, this.type);
+        case ITensor.TYPE_DOUBLE:
+            assert Ddata != null : "Vec:getNormal:Ddata == null";
+
+            double[] normalData = new double[Ddata.length];
+
+            for (int i = 0; i < Ddata.length; i++) {
+                normalData[i] = Ddata[i] / length;
+            }
+
+            return new Vec(normalData, this.type);
         default:
-            resVec = (Vec<NumT, VecT, MatT>) this.copy();
-            for (int i = 0; i < this.data.length; i++) {
-                switch (this.quadro_data_type[i % 4]) {
-                case IVector.TYPE_ELEMENT_NUM:
-                    assert this.data[i] instanceof Number : "Vec:add: data type mismatch";
-
-                    resVec.set(i, (NumT) (Double) (((Number) this.data[i]).doubleValue()
-                            + ((Number) other.get(i)).doubleValue()));
-                    break;
-                case IVector.TYPE_ELEMENT_VEC:
-                    assert this.data[i] instanceof IVector : "Vec:add: data type mismatch";
-
-                    resVec.set(i, (VecT) ((IVector<NumT, VecT, MatT>) this.data[i])
-                            .add((IVector<NumT, VecT, MatT>) other.get(i)));
-                    break;
-                case IVector.TYPE_ELEMENT_MAT:
-                    assert this.data[i] instanceof IMatrix : "Vec:add: data type mismatch";
-
-                    resVec.set(i, (MatT) ((IMatrix<NumT, VecT, MatT>) this.data[i])
-                            .add((IMatrix<NumT, VecT, MatT>) other.get(i)));
-                    break;
-                }
-            }
-        }
-        return resVec;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public IVector<NumT, VecT, MatT> subtract(IVector<NumT, VecT, MatT> other) {
-        Vec<NumT, VecT, MatT> resVec;
-        switch (this.type & (IVector.TYPE_NUM_VEC | IVector.TYPE_VEC_VEC | IVector.TYPE_MAT_VEC)) {
-        case IVector.TYPE_NO_TYPE:
-            setProperlyType();
-            return this.add(other); // recursive call to ensure proper type is set
-        case IVector.TYPE_NUM_VEC:
-            if (this.getDimension() >= other.getDimension()) {
-                resVec = (Vec<NumT, VecT, MatT>) this.copy();
-                for (int i = 0; i < other.getDimension(); i++) {
-                    assert this.data[i] instanceof Number : "Vec:subtract: data type mismatch";
-
-                    resVec.set(i, (NumT) (Double) (((Number) this.data[i]).doubleValue()
-                            - ((Number) other.get(i)).doubleValue()));
-                }
-            } else {
-                resVec = (Vec<NumT, VecT, MatT>) other.copy();
-                for (int i = 0; i < this.data.length; i++) {
-                    assert this.data[i] instanceof Number : "Vec:subtract: data type mismatch";
-
-                    resVec.set(i, (NumT) (Double) (((Number) this.data[i]).doubleValue()
-                            - ((Number) other.get(i)).doubleValue()));
-                }
-            }
-            break;
-        case IVector.TYPE_VEC_VEC:
-            if (this.getDimension() >= other.getDimension()) {
-                resVec = (Vec<NumT, VecT, MatT>) this.copy();
-                for (int i = 0; i < other.getDimension(); i++) {
-                    assert this.data[i] instanceof IVector : "Vec:subtract: data type mismatch";
-                    
-                    resVec.set(i, (VecT) ((IVector<NumT, VecT, MatT>) this.data[i])
-                            .subtract((IVector<NumT, VecT, MatT>) other.get(i)));
-                }
-            } else {
-                resVec = (Vec<NumT, VecT, MatT>) other.copy();
-                for (int i = 0; i < this.data.length; i++) {
-                    assert this.data[i] instanceof IVector : "Vec:subtract: data type mismatch";
-
-                    resVec.set(i, (VecT) ((IVector<NumT, VecT, MatT>) this.data[i])
-                            .subtract((IVector<NumT, VecT, MatT>) other.get(i)));
-                }
-            }
-            break;
-        case IVector.TYPE_MAT_VEC:
-            if (this.getDimension() >= other.getDimension()) {
-                resVec = (Vec<NumT, VecT, MatT>) this.copy();
-                for (int i = 0; i < other.getDimension(); i++) {
-                    assert this.data[i] instanceof IMatrix : "Vec:subtract: data type mismatch";
-
-                    resVec.set(i, (MatT) ((IMatrix<NumT, VecT, MatT>) this.data[i])
-                            .subtract((IMatrix<NumT, VecT, MatT>) other.get(i)));
-                }
-            } else {
-                resVec = (Vec<NumT, VecT, MatT>) other.copy();
-                for (int i = 0; i < this.data.length; i++) {
-                    assert this.data[i] instanceof IMatrix : "Vec:subtract: data type mismatch";
-
-                    resVec.set(i, (MatT) ((IMatrix<NumT, VecT, MatT>) this.data[i])
-                            .subtract((IMatrix<NumT, VecT, MatT>) other.get(i)));
-                }
-            }
-            break;
-        default:
-            resVec = (Vec<NumT, VecT, MatT>) this.copy();
-            for (int i = 0; i < this.data.length; i++) {
-                switch (this.quadro_data_type[i % 4]) {
-                case IVector.TYPE_ELEMENT_NUM:
-                    assert this.data[i] instanceof Number : "Vec:subtract: data type mismatch";
-
-                    resVec.set(i, (NumT) (Double) (((Number) this.data[i]).doubleValue()
-                            - ((Number) other.get(i)).doubleValue()));
-                    break;
-                case IVector.TYPE_ELEMENT_VEC:
-                    assert this.data[i] instanceof IVector : "Vec:subtract: data type mismatch";
-
-                    resVec.set(i, (VecT) ((IVector<NumT, VecT, MatT>) this.data[i])
-                            .subtract((IVector<NumT, VecT, MatT>) other.get(i)));
-                    break;
-                case IVector.TYPE_ELEMENT_MAT:
-                    assert this.data[i] instanceof IMatrix : "Vec:subtract: data type mismatch";
-
-                    resVec.set(i, (MatT) ((IMatrix<NumT, VecT, MatT>) this.data[i])
-                            .subtract((IMatrix<NumT, VecT, MatT>) other.get(i)));
-                    break;
-                }
-            }
-        }
-        return resVec;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Vec<NumT, VecT, MatT> multiply(NumT scalar) {
-        Vec<NumT, VecT, MatT> resVec = (Vec<NumT, VecT, MatT>) this.copy();
-        switch (this.type & (IVector.TYPE_NUM_VEC | IVector.TYPE_VEC_VEC | IVector.TYPE_MAT_VEC)) {
-        case IVector.TYPE_NO_TYPE:
-            setProperlyType();
-            return this.multiply(scalar); // recursive call to ensure proper type is set
-        case IVector.TYPE_NUM_VEC:
-            for (int i = 0; i < this.data.length; i++) {
-                assert this.data[i] instanceof Number : "Vec:multiply: data type mismatch";
-
-                resVec.set(i, (NumT) (Double) (((Number) this.data[i]).doubleValue() * scalar.doubleValue()));
-            }
-            break;
-        case IVector.TYPE_VEC_VEC:
-            for (int i = 0; i < this.data.length; i++) {
-                assert this.data[i] instanceof IVector : "Vec:multiply: data type mismatch";
-
-                resVec.set(i, (VecT) ((IVector<NumT, VecT, MatT>) this.data[i]).multiply(scalar));
-            }
-            break;
-        case IVector.TYPE_MAT_VEC:
-            for (int i = 0; i < this.data.length; i++) {
-                assert this.data[i] instanceof IMatrix : "Vec:multiply: data type mismatch";
-
-                resVec.set(i, (MatT) ((IMatrix<NumT, VecT, MatT>) this.data[i]).multiply(scalar));
-            }
-            break;
-        default:
-            for (int i = 0; i < this.data.length; i++) {
-                switch (this.quadro_data_type[i % 4]) {
-                case IVector.TYPE_ELEMENT_NUM:
-                    assert this.data[i] instanceof Number : "Vec:multiply: data type mismatch";
-
-                    resVec.set(i, (NumT) (Double) (((Number) this.data[i]).doubleValue() * scalar.doubleValue()));
-                    break;
-                case IVector.TYPE_ELEMENT_VEC:
-                    assert this.data[i] instanceof IVector : "Vec:multiply: data type mismatch";
-
-                    resVec.set(i, (VecT) ((IVector<NumT, VecT, MatT>) this.data[i]).multiply(scalar));
-                    break;
-                case IVector.TYPE_ELEMENT_MAT:
-                    assert this.data[i] instanceof IMatrix : "Vec:multiply: data type mismatch";
-
-                    resVec.set(i, (MatT) ((IMatrix<NumT, VecT, MatT>) this.data[i]).multiply(scalar));
-                    break;
-                default:
-                    throw new IllegalStateException("Vec:multiply: missing data type");
-                }
-            }
-        }
-        return resVec;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public NumT dot(IVector<NumT, VecT, MatT> other) {
-        double result = 0;
-        switch (this.type & (IVector.TYPE_NUM_VEC | IVector.TYPE_VEC_VEC | IVector.TYPE_MAT_VEC)) {
-        case IVector.TYPE_NO_TYPE:
-            setProperlyType();
-            return this.dot(other); // recursive call to ensure proper type is set
-        case IVector.TYPE_NUM_VEC:
-            if (this.data.length >= other.getDimension()) {
-                for (int i = 0; i < other.getDimension(); i++) {
-                    assert this.data[i] instanceof Number : "Vec:dot: data type mismatch";
-                    assert other.get(i) instanceof Number : "Vec:dot: other data type mismatch";
-
-                    result += ((Number) this.data[i]).doubleValue() * ((Number) other.get(i)).doubleValue();
-                }
-            } else {
-                for (int i = 0; i < this.data.length; i++) {
-                    assert this.data[i] instanceof Number : "Vec:dot: data type mismatch";
-                    assert other.get(i) instanceof Number : "Vec:dot: other data type mismatch";
-                    
-                    result += ((Number) this.data[i]).doubleValue() * ((Number) other.get(i)).doubleValue();
-                }
-            }
-            return (NumT) (Double) result;
-        default:
-            throw new UnsupportedOperationException("Vec:dot - vector of vectors or matrix vector not supported");
+            throw new IllegalArgumentException("Vec:getNormal:type is not supported: " + this.type);
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Vec<NumT, VecT, MatT> cross(IVector<NumT, VecT, MatT> other) {
-        switch (this.type & (IVector.TYPE_NUM_VEC | IVector.TYPE_VEC_VEC | IVector.TYPE_MAT_VEC)) {
-        case IVector.TYPE_NO_TYPE:
-            setProperlyType();
-            return this.cross(other); // recursive call to ensure proper type is set
-        case IVector.TYPE_NUM_VEC:
-            Vec<NumT, VecT, MatT> rVec = new Vec<>((NumT) (Double) 0.0, (NumT) (Double) 0.0, (NumT) (Double) 0.0);
-            Vec<NumT, VecT, MatT> fVec;
+    public Vec add(IVector other) {
+        assert other != null : "Vec:add:other == null";
+        assert this.getDimension() == other.getDimension() : "Vec:add:dimensions do not match";
 
-            switch (this.getDimension()) {
-            case 0:
-                rVec = new Vec<NumT, VecT, MatT>((NumT) (Double) 0.0, (NumT) (Double) 0.0, (NumT) (Double) 0.0);
-                return rVec;
-            case 1:
-                fVec = new Vec<NumT, VecT, MatT>((NumT) data[0], (NumT) (Double) 0.0, (NumT) (Double) 0.0);
-                break;
-            case 2:
-                fVec = new Vec<NumT, VecT, MatT>((NumT) data[0], (NumT) data[1], (NumT) (Double) 0.0);
-                break;
-            case 3:
-                fVec = (Vec<NumT, VecT, MatT>) this.copy();
-                break;
-            default:
-                throw new UnsupportedOperationException("Vec:cross: cross product is only defined for 3-D vectors");
+        switch (this.type) {
+        case ITensor.TYPE_INT:
+            assert Idata != null : "Vec:add:Idata == null";
+
+            int[] intData = new int[Idata.length];
+            for (int i = 0; i < Idata.length; i++) {
+                intData[i] = Idata[i] + other.geti(i);
             }
+            return new Vec(intData, ITensor.TYPE_INT);
+        case ITensor.TYPE_LONG:
+            assert Ldata != null : "Vec:add:Ldata == null";
 
-            switch (other.getDimension()) {
-            case 0:
-                rVec = new Vec<NumT, VecT, MatT>((NumT) (Double) 0.0, (NumT) (Double) 0.0, (NumT) (Double) 0.0);
-                return rVec;
-            case 1:
-                rVec.set(0, (NumT) (Double) 0.0);
-                rVec.set(1, (NumT) (Double) (((Number) other.get(0)).doubleValue() * ((Number) fVec.get(2)).doubleValue()));
-                rVec.set(2, (NumT) (Double) (-((Number) other.get(0)).doubleValue() * ((Number) fVec.get(1)).doubleValue()));
-                return rVec;
-            case 2:
-                rVec.set(0, (NumT) (Double) (-((Number) other.get(1)).doubleValue() * ((Number) fVec.get(2)).doubleValue()));
-                rVec.set(1, (NumT) (Double) (((Number) other.get(0)).doubleValue() * ((Number) fVec.get(2)).doubleValue()));
-                rVec.set(2, (NumT) (Double) ((((Number) fVec.get(0)).doubleValue() * ((Number) other.get(1)).doubleValue()) - ((Number) other.get(0)).doubleValue() * ((Number) fVec.get(1)).doubleValue()));
-                return rVec;
-            case 3:
-                rVec.set(0, (NumT) (Double) (((Number) fVec.get(1)).doubleValue() * ((Number) other.get(2)).doubleValue()
-                    - ((Number) fVec.get(2)).doubleValue() * ((Number) other.get(1)).doubleValue()));
-                rVec.set(1, (NumT) (Double) (((Number) fVec.get(2)).doubleValue() * ((Number) other.get(0)).doubleValue()
-                    - ((Number) fVec.get(0)).doubleValue() * ((Number) other.get(2)).doubleValue()));
-                rVec.set(2, (NumT) (Double) (((Number) fVec.get(0)).doubleValue() * ((Number) other.get(1)).doubleValue()
-                    - ((Number) fVec.get(1)).doubleValue() * ((Number) other.get(0)).doubleValue()));
-
-                return rVec;
-            default:
-                throw new UnsupportedOperationException("Vec:cross: cross product is only undefined for 4+D vectors");
+            long[] longData = new long[Ldata.length];
+            for (int i = 0; i < Ldata.length; i++) {
+                longData[i] = Ldata[i] + other.getl(i);
             }
+            return new Vec(longData, ITensor.TYPE_LONG);
+        case ITensor.TYPE_FLOAT:
+            assert Fdata != null : "Vec:add:Fdata == null";
+
+            float[] floatData = new float[Fdata.length];
+            for (int i = 0; i < Fdata.length; i++) {
+                floatData[i] = Fdata[i] + other.getf(i);
+            }
+            return new Vec(floatData, ITensor.TYPE_FLOAT);
+        case ITensor.TYPE_DOUBLE:
+            assert Ddata != null : "Vec:add:Ddata == null";
+
+            double[] doubleData = new double[Ddata.length];
+            for (int i = 0; i < Ddata.length; i++) {
+                doubleData[i] = Ddata[i] + other.getd(i);
+            }
+            return new Vec(doubleData, ITensor.TYPE_DOUBLE);
         default:
-            throw new UnsupportedOperationException("Vec:cross: vector of vectors or matrix vector not supported");
+            throw new IllegalArgumentException("Vec:add:type is not supported: " + this.type);
+        }
+    }
+
+    @Override
+    public Vec subtract(IVector other) {
+        assert other != null : "Vec:subtract:other == null";
+        assert this.getDimension() == other.getDimension() : "Vec:subtract:dimensions do not match";
+
+        switch (this.type) {
+        case ITensor.TYPE_INT:
+            assert Idata != null : "Vec:subtract:Idata == null";
+
+            int[] intData = new int[Idata.length];
+            for (int i = 0; i < Idata.length; i++) {
+                intData[i] = Idata[i] - other.geti(i);
+            }
+            return new Vec(intData, ITensor.TYPE_INT);
+        case ITensor.TYPE_LONG:
+            assert Ldata != null : "Vec:subtract:Ldata == null";
+
+            long[] longData = new long[Ldata.length];
+            for (int i = 0; i < Ldata.length; i++) {
+                longData[i] = Ldata[i] - other.getl(i);
+            }
+            return new Vec(longData, ITensor.TYPE_LONG);
+        case ITensor.TYPE_FLOAT:
+            assert Fdata != null : "Vec:subtract:Fdata == null";
+
+            float[] floatData = new float[Fdata.length];
+            for (int i = 0; i < Fdata.length; i++) {
+                floatData[i] = Fdata[i] - other.getf(i);
+            }
+            return new Vec(floatData, ITensor.TYPE_FLOAT);
+        case ITensor.TYPE_DOUBLE:
+            assert Ddata != null : "Vec:subtract:Ddata == null";
+
+            double[] doubleData = new double[Ddata.length];
+            for (int i = 0; i < Ddata.length; i++) {
+                doubleData[i] = Ddata[i] - other.getd(i);
+            }
+            return new Vec(doubleData, ITensor.TYPE_DOUBLE);
+        default:
+            throw new IllegalArgumentException("Vec:subtract:type is not supported: " + this.type);
+        }
+    }
+
+    @Override
+    public Vec multiply(int scalar) {
+        assert Idata != null : "Vec:multiply:Idata == null";
+
+        int[] intData = new int[Idata.length];
+        for (int i = 0; i < Idata.length; i++) {
+            intData[i] = Idata[i] * scalar;
+        }
+        return new Vec(intData, ITensor.TYPE_INT);
+    }
+
+    @Override
+    public Vec multiply(long scalar) {
+        assert Ldata != null : "Vec:multiply:Ldata == null";
+
+        long[] longData = new long[Ldata.length];
+        for (int i = 0; i < Ldata.length; i++) {
+            longData[i] = Ldata[i] * scalar;
+        }
+        return new Vec(longData, ITensor.TYPE_LONG);
+    }
+
+    @Override
+    public Vec multiply(float scalar) {
+        assert Fdata != null : "Vec:multiply:Fdata == null";
+
+        float[] floatData = new float[Fdata.length];
+        for (int i = 0; i < Fdata.length; i++) {
+            floatData[i] = Fdata[i] * scalar;
+        }
+        return new Vec(floatData, ITensor.TYPE_FLOAT);
+    }
+
+    @Override
+    public Vec multiply(double scalar) {
+        assert Ddata != null : "Vec:multiply:Ddata == null";
+
+        double[] doubleData = new double[Ddata.length];
+        for (int i = 0; i < Ddata.length; i++) {
+            doubleData[i] = Ddata[i] * scalar;
+        }
+        return new Vec(doubleData, ITensor.TYPE_DOUBLE);
+    }
+
+    @Override
+    public int doti(IVector other) {
+        assert other != null : "Vec:dot:other == null";
+        assert Idata != null : "Vec:dot:Idata == null";
+        assert this.getDimension() == other.getDimension() : "Vec:dot:dimensions do not match";
+
+        int sum = 0;
+
+        for (int i = 0; i < Idata.length; i++) {
+            sum += Idata[i] * other.geti(i);
+        }
+
+        return sum;
+    }
+
+    @Override
+    public long dotl(IVector other) {
+        assert other != null : "Vec:dotl:other == null";
+        assert Ldata != null : "Vec:dotl:Ldata == null";
+        assert this.getDimension() == other.getDimension() : "Vec:dotl:dimensions do not match";
+
+        long sum = 0;
+
+        for (int i = 0; i < Ldata.length; i++) {
+            sum += Ldata[i] * other.getl(i);
+        }
+
+        return sum;
+    }
+
+    @Override
+    public float dotf(IVector other) {
+        assert other != null : "Vec:dotf:other == null";
+        assert Fdata != null : "Vec:dotf:Fdata == null";
+        assert this.getDimension() == other.getDimension() : "Vec:dotf:dimensions do not match";
+
+        float sum = 0.0f;
+
+        for (int i = 0; i < Fdata.length; i++) {
+            sum += Fdata[i] * other.getf(i);
+        }
+
+        return sum;
+    }
+
+    @Override
+    public double dotd(IVector other) {
+        assert other != null : "Vec:dotd:other == null";
+        assert Ddata != null : "Vec:dotd:Ddata == null";
+        assert this.getDimension() == other.getDimension() : "Vec:dotd:dimensions do not match";
+
+        double sum = 0.0;
+
+        for (int i = 0; i < Ddata.length; i++) {
+            sum += Ddata[i] * other.getd(i);
+        }
+
+        return sum;
+    }
+
+    @Override
+    public Vec cross(IVector other) {
+        assert this.getDimension() == 3  : "Vec:cross: this vector must be 3D";
+        assert other.getDimension() == 3 : "Vec:cross: other vector must be 3D";
+
+        switch (this.type) {
+        case ITensor.TYPE_INT:
+            assert Idata != null : "Vec:cross: Idata is null";
+
+            int[] intResult = new int[3];
+            int i1 = Idata[0], i2 = Idata[1], i3 = Idata[2];
+            int ib1 = other.geti(0);
+            int ib2 = other.geti(1);
+            int ib3 = other.geti(2);
+
+            intResult[0] = i2 * ib3 - i3 * ib2;
+            intResult[1] = i3 * ib1 - i1 * ib3;
+            intResult[2] = i1 * ib2 - i2 * ib1;
+
+            return new Vec(intResult, ITensor.TYPE_INT);
+        case ITensor.TYPE_LONG:
+            assert Ldata != null : "Vec:cross: Ldata is null";
+
+            long[] longResult = new long[3];
+            long l1 = Ldata[0], l2 = Ldata[1], l3 = Ldata[2];
+            long lb1 = other.getl(0);
+            long lb2 = other.getl(1);
+            long lb3 = other.getl(2);
+
+            longResult[0] = l2 * lb3 - l3 * lb2;
+            longResult[1] = l3 * lb1 - l1 * lb3;
+            longResult[2] = l1 * lb2 - l2 * lb1;
+
+            return new Vec(longResult, ITensor.TYPE_LONG);
+        case ITensor.TYPE_FLOAT:
+            assert Fdata != null : "Vec:cross: Fdata is null";
+
+            float[] floatResult = new float[3];
+            float f1 = Fdata[0], f2 = Fdata[1], f3 = Fdata[2];
+            float fb1 = other.getf(0);
+            float fb2 = other.getf(1);
+            float fb3 = other.getf(2);
+
+            floatResult[0] = f2 * fb3 - f3 * fb2;
+            floatResult[1] = f3 * fb1 - f1 * fb3;
+            floatResult[2] = f1 * fb2 - f2 * fb1;
+
+            return new Vec(floatResult, ITensor.TYPE_FLOAT);
+        case ITensor.TYPE_DOUBLE:
+            assert Ddata != null : "Vec:cross: Ddata is null";
+
+            double[] doubleResult = new double[3];
+            double d1 = Ddata[0], d2 = Ddata[1], d3 = Ddata[2];
+            double db1 = other.getd(0);
+            double db2 = other.getd(1);
+            double db3 = other.getd(2);
+
+            doubleResult[0] = d2 * db3 - d3 * db2;
+            doubleResult[1] = d3 * db1 - d1 * db3;
+            doubleResult[2] = d1 * db2 - d2 * db1;
+
+            return new Vec(doubleResult, ITensor.TYPE_DOUBLE);
+        default:
+            throw new UnsupportedOperationException("Vec:cross: unsupported type: " + this.type);
         }
     }
 }
