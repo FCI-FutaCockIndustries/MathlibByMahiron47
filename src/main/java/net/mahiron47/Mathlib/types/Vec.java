@@ -171,6 +171,11 @@ public class Vec implements IVector {
     }
 
     @Override
+    public byte getType() {
+        return this.type;
+    }
+
+    @Override
     public int geti(int i) {
         assert i >= 0 && i < Idata.length : "Vec:get:i out of bounds";
         assert Idata != null : "Vec:get:Idata == null";

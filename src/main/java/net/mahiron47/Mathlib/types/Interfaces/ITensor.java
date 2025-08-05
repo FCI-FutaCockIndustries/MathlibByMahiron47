@@ -6,4 +6,6 @@ public interface ITensor {
     static final byte TYPE_LONG   = 0b00000010;
     static final byte TYPE_FLOAT  = 0b00000100;
     static final byte TYPE_DOUBLE = 0b00001000;
+
+    byte getType();
 }

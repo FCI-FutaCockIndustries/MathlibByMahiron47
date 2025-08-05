@@ -15,6 +15,11 @@ public class Vec3i implements IVector {
 	}
 
 	@Override
+	public byte getType() {
+		return ITensor.TYPE_INT;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof IVector)) return false;

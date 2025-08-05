@@ -129,6 +129,11 @@ public class Mat implements IMatrix {
     }
 
     @Override
+    public byte getType() {
+        return this.type;
+    }
+
+    @Override
     public int geti(int i, int j) {
         assert i >= 0 && i < Idata.length : "Mat:get:i out of bounds for Idata";
         assert j >= 0 && j < Idata[i].length : "Mat:get:j out of bounds for Idata";

@@ -36,6 +36,11 @@ public class Mat2d implements IMatrix {
     }
 
     @Override
+    public byte getType() {
+        return ITensor.TYPE_DOUBLE;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || !(obj instanceof IMatrix)) return false;

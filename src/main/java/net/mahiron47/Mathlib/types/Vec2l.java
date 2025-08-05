@@ -13,6 +13,11 @@ public class Vec2l implements IVector {
     }
 
     @Override
+    public byte getType() {
+        return ITensor.TYPE_LONG;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof IVector)) return false;
