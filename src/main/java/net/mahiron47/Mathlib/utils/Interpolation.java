@@ -12,6 +12,17 @@ import net.mahiron47.mathlib.types.Vec3f;
 import net.mahiron47.mathlib.types.Vec3d;
 import net.mahiron47.mathlib.types.Vec;
 
+/**
+ * Utility class for performing linear interpolation between values and vectors.
+ * 
+ * <h2>Methods:</h2>
+ * <ul>
+ * <li>{@link #mix(double, double, double)}: Interpolates between two double
+ * values.</li>
+ * <li>{@link #mix(IVector, IVector, double)}: Interpolates between two vectors
+ * of the same type and dimension.</li>
+ * </ul>
+ */
 public class Interpolation {
 	private Interpolation() {
 		// Private constructor to prevent instantiation

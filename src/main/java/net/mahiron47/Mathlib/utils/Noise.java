@@ -1,18 +1,12 @@
 package net.mahiron47.mathlib.utils;
 
+import net.mahiron47.mathlib.types.Vec2d;
+import net.mahiron47.mathlib.types.Vec3d;
+import net.mahiron47.mathlib.types.Vec2f;
+import net.mahiron47.mathlib.types.Vec3f;
+
 /**
  * Utility class for generating pseudo-random noise values using sine functions.
- * 
- * <p>
- * This class provides methods to generate 1D, 2D, 3D, and 4D noise values
- * based on sine functions. The noise values are deterministic and depend on
- * the input coordinates. The fractional part of the sine computation is used
- * to produce values between 0.0 and 1.0.
- * </p>
- * 
- * <p>
- * Note: This class is not intended for instantiation.
- * </p>
  * 
  * <h2>Methods:</h2>
  * <ul>
@@ -27,27 +21,6 @@ package net.mahiron47.mathlib.utils;
  * <li>{@link #sinoise(double, double, double, double)}: Generates 4D sine noise
  * based on four inputs.</li>
  * </ul>
- * 
- * <h2>Usage:</h2>
- * <p>
- * Use the static methods provided by this class to generate noise values
- * for various dimensions. These methods are useful for procedural generation
- * tasks such as terrain generation, texture creation, or other applications
- * requiring pseudo-random values.
- * </p>
- * 
- * <h2>Example:</h2>
- * 
- * <pre>
- * double noise1D = Noise.sinoise(42.0);
- * double noise2D = Noise.sinoise(42.0, 24.0);
- * double noise3D = Noise.sinoise(42.0, 24.0, 12.0);
- * double noise4D = Noise.sinoise(42.0, 24.0, 12.0, 6.0);
- * </pre>
- * 
- * <p>
- * All methods return values between 0.0 and 1.0.
- * </p>
  */
 public class Noise {
 	private Noise() {
@@ -68,14 +41,66 @@ public class Noise {
 		}
 	}
 
+	public static float fract(float x) {
+		if (x >= 0) {
+			return x - (float) Math.floor(x);
+		} else {
+			return 1.0f + (x - (float) Math.floor(x));
+		}
+	}
+
+	private static Vec2d hash(Vec2d x) {
+		Vec2d p = new Vec2d(Math.floor(x.getd(0) * 0.5), Math.floor(x.getd(1) * 0.5));
+		p = new Vec2d(p.dotd(new Vec2d(127.1, 311.7)), p.dotd(new Vec2d(269.5, 183.3)));
+
+		return new Vec2d(
+			-1.0 + 2.0 * fract(Math.sin(p.getd(0)) * 43758.5453123),
+			-1.0 + 2.0 * fract(Math.sin(p.getd(1)) * 43758.5453123)
+		);
+	}
+
+	private static Vec2f hash(Vec2f x) {
+		Vec2f p = new Vec2f((float) Math.floor(x.getf(0) * 0.5f), (float) Math.floor(x.getf(1) * 0.5f));
+		p = new Vec2f(p.dotf(new Vec2f(127.1f, 311.7f)), p.dotf(new Vec2f(269.5f, 183.3f)));
+
+		return new Vec2f(
+			-1.0f + 2.0f * fract((float) Math.sin(p.getf(0)) * 43758.5453123f),
+			-1.0f + 2.0f * fract((float) Math.sin(p.getf(1)) * 43758.5453123f)
+		);
+	}
+
+	private static double step(double edge, double x) {
+		return x < edge ? 0.0 : 1.0;
+	}
+
+	private static float step(float edge, float x) {
+		return x < edge ? 0.0f : 1.0f;
+	}
+
+	private static Vec3d max(Vec3d v, double value) {
+		return new Vec3d(
+			Math.max(v.getd(0), value),
+			Math.max(v.getd(1), value),
+			Math.max(v.getd(2), value)
+		);
+	}
+
+	private static Vec3f max(Vec3f v, float value) {
+		return new Vec3f(
+			Math.max(v.getf(0), value),
+			Math.max(v.getf(1), value),
+			Math.max(v.getf(2), value)
+		);
+	}
+
 	/**
 	 * Generates a 1D sin noise value based on the input x.
 	 *
-	 * @param x The input value.
+	 * @param p The input value.
 	 * @return A pseudo-random noise value between 0.0 and 1.0.
 	 */
-	public static double sinoise(double x) {
-		return fract(Math.sin(x * 495119) * 499509);
+	public static double sinoise(double p) {
+		return fract(Math.sin(p * 495119) * 499509);
 	}
 
 	/**
@@ -85,8 +110,8 @@ public class Noise {
 	 * @param y The y coordinate.
 	 * @return A pseudo-random noise value between 0.0 and 1.0.
 	 */
-	public static double sinoise(double x, double y) {
-		return fract(Math.sin(x * 495119 + y * 494109) * 499509);
+	public static double sinoise(Vec2d p) {
+		return fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109) * 499509);
 	}
 
 	/**
@@ -97,8 +122,8 @@ public class Noise {
 	 * @param z The z coordinate.
 	 * @return A pseudo-random noise value between 0.0 and 1.0.
 	 */
-	public static double sinoise(double x, double y, double z) {
-		return fract(Math.sin(x * 495119 + y * 494109 + z * 549161) * 499509);
+	public static double sinoise(Vec3d p) {
+		return fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109 + p.getd(2) * 549161) * 499509);
 	}
 
 	/**
@@ -110,7 +135,59 @@ public class Noise {
 	 * @param w The w coordinate.
 	 * @return A pseudo-random noise value between 0.0 and 1.0.
 	 */
-	public static double sinoise(double x, double y, double z, double w) {
-		return fract(Math.sin(x * 495119 + y * 494109 + z * 549161 + w * 547967) * 499509);
+	public static double sinoise(Vec3d p, double w) {
+		return fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109 + p.getd(2) * 549161 + w * 547967) * 499509);
+	}
+
+	public static double simplexNoise(Vec2d p) {
+		double K1 = 0.366025404; // (sqrt(3)-1)/2;
+		double K2 = 0.211324865; // (3-sqrt(3))/6;
+
+		Vec2d i = new Vec2d(
+			Math.floor(p.getd(0) + (p.getd(0) + p.getd(1)) * K1),
+			Math.floor(p.getd(1) + (p.getd(0) + p.getd(1)) * K1)
+		);
+		Vec2d a = p.subtract(i).add(new Vec2d((i.getd(0) + i.getd(1)) * K2, (i.getd(0) + i.getd(1)) * K2));
+		double m = step(a.getd(1), a.getd(0));
+		Vec2d o = new Vec2d(m, 1.0 - m);
+		Vec2d b = a.subtract(o).add(new Vec2d(K2, K2));
+		Vec2d c = a.subtract(new Vec2d(
+			1.0 + 2.0 * K2,
+			1.0 + 2.0 * K2)
+		);
+		Vec3d h = max(new Vec3d(0.5, 0.5, 0.5).subtract(o), 0.0);
+		Vec3d n = h.cross(h).cross(h).cross(h).cross(new Vec3d(
+			a.dotd(hash(i)),
+			b.dotd(hash(i.add(o))),
+			c.dotd(hash(i.add(new Vec2d(1.0, 1.0))))
+		));
+
+		return n.dotd(new Vec3d(70.0, 70.0, 70.0));
+	}
+
+	public static float simplexNoise(Vec2f p) {
+		float K1 = 0.366025404f; // (sqrt(3)-1)/2;
+		float K2 = 0.211324865f; // (3-sqrt(3))/6;
+
+		Vec2f i = new Vec2f(
+			(float) Math.floor(p.getf(0) + (p.getf(0) + p.getf(1)) * K1),
+			(float) Math.floor(p.getf(1) + (p.getf(0) + p.getf(1)) * K1)
+		);
+		Vec2f a = p.subtract(i).add(new Vec2f((i.getf(0) + i.getf(1)) * K2, (i.getf(0) + i.getf(1)) * K2));
+		float m = step(a.getf(1), a.getf(0));
+		Vec2f o = new Vec2f(m, 1.0f - m);
+		Vec2f b = a.subtract(o).add(new Vec2f(K2, K2));
+		Vec2f c = a.subtract(new Vec2f(
+			1.0f + 2.0f * K2,
+			1.0f + 2.0f * K2
+		));
+		Vec3f h = max(new Vec3f(0.5f, 0.5f, 0.5f).subtract(o), 0.0f);
+		Vec3f n = h.cross(h).cross(h).cross(h).cross(new Vec3f(
+			a.dotf(hash(i)),
+			b.dotf(hash(i.add(o))),
+			c.dotf(hash(i.add(new Vec2f(1.0f, 1.0f))))
+		));
+
+		return n.dotf(new Vec3f(70.0f, 70.0f, 70.0f));
 	}
 }
