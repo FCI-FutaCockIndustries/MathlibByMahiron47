@@ -254,14 +254,31 @@ public class Vec3l implements IVector {
     }
 
     @Override
-    public Vec3l cross(IVector other) {
+    public IVector cross(IVector other) {
         assert other != null : "Vec3l:cross: Other vector cannot be null";
-        assert other.getDimension() == 3 : "Vec3l:cross: Other vector must be of dimension 3";
 
-        return new Vec3l(
-            this.y * other.getl(2) - this.z * other.getl(1),
-            this.z * other.getl(0) - this.x * other.getl(2),
-            this.x * other.getl(1) - this.y * other.getl(0)
-        );
+        switch (other.getDimension()) {
+            case 2:
+                return new Vec3l(
+                    -this.z * other.getl(1),
+                    this.z * other.getl(0),
+                    this.x * other.getl(1) - this.y * other.getl(0)
+                );
+            case 3:
+                return new Vec3l(
+                    this.y * other.getl(2) - this.z * other.getl(1),
+                    this.z * other.getl(0) - this.x * other.getl(2),
+                    this.x * other.getl(1) - this.y * other.getl(0)
+                );
+            case 4:
+                return new Vec4l(
+                    this.y * other.getl(2) - this.z * other.getl(1),
+                    this.z * other.getl(0) - this.x * other.getl(2),
+                    this.x * other.getl(1) - this.y * other.getl(0),
+                    other.getl(3)
+                );
+            default:
+                throw new IllegalArgumentException("Vec3l:cross: Other vector must be of dimension 2 or 3");
+        }
     }
 }

@@ -182,8 +182,31 @@ public class Vec2l implements IVector {
     }
 
     @Override
-    public Vec3l cross(IVector other) {
-        long z = this.x * other.getl(1) - this.y * other.getl(0);
-        return new Vec3l(0, 0, z);
+    public IVector cross(IVector other) {
+        assert other != null : "Vec2l:cross: Other vector cannot be null";
+        
+        switch (other.getDimension()) {
+            case 2:
+                return new Vec3l(
+                    0,
+                    0,
+                    this.x * other.getl(1) - this.y * other.getl(0)
+                );
+            case 3:
+                return new Vec3l(
+                    this.y * other.getl(2),
+                    -this.x * other.getl(2),
+                    this.x * other.getl(1) - this.y * other.getl(0)
+                );
+            case 4:
+                return new Vec4l(
+                    this.y * other.getl(2),
+                    -this.x * other.getl(2),
+                    this.x * other.getl(1) - this.y * other.getl(0),
+                    other.getl(3)
+                );
+            default:
+                throw new IllegalArgumentException("Vec2l:cross: Other vector must be of dimension 2 or 3");
+        }
     }
 }

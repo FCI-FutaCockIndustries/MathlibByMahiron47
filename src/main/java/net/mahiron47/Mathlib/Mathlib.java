@@ -10,9 +10,9 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Mathlib.MODID, name = Mathlib.NAME, version = Mathlib.VERSION, acceptedMinecraftVersions = "[1.12.2]", useMetadata = true)
 public class Mathlib {
-    public static final String MODID = "belowhorizons";
-    public static final String NAME = "BelowHorizons";
-    public static final String VERSION = "1.0.0";
+    public static final String MODID = "mathlibbymahiron47";
+    public static final String NAME = "Mathlib by Mahiron47";
+    public static final String VERSION = "0.1.0";
 
     private static Logger logger;
     public static WorldType worldType;

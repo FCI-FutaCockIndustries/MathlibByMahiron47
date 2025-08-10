@@ -201,8 +201,31 @@ public class Vec2d implements IVector {
     }
 
     @Override
-    public Vec3d cross(IVector other) {
-        double z = this.x * other.getd(1) - this.y * other.getd(0);
-        return new Vec3d(0.0, 0.0, z);
+    public IVector cross(IVector other) {
+        assert other != null : "Vec2d:cross: Other vector cannot be null";
+
+        switch (other.getDimension()) {
+            case 2:
+                return new Vec3d(
+                    0,
+                    0,
+                    this.x * other.getd(1) - this.y * other.getd(0)
+                );
+            case 3:
+                return new Vec3d(
+                    this.y * other.getd(2),
+                    -this.x * other.getd(2),
+                    this.x * other.getd(1) - this.y * other.getd(0)
+                );
+            case 4:
+                return new Vec4d(
+                    this.y * other.getd(2),
+                    -this.x * other.getd(2),
+                    this.x * other.getd(1) - this.y * other.getd(0),
+                    other.getd(3)
+                );
+            default:
+                throw new IllegalArgumentException("Vec2d:cross: Other vector must be of dimension 2 or 3");
+        }
     }
 }

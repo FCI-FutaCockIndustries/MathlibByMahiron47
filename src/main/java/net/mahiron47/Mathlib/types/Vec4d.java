@@ -285,6 +285,32 @@ public class Vec4d implements IVector {
 
     @Override
     public Vec4d cross(IVector other) {
-        throw new UnsupportedOperationException("Vec4d:cross: Cross product is not defined for 4-dimensional vectors");
+        assert other != null : "Vec4d:cross: Other vector cannot be null";
+
+        switch (other.getDimension()) {
+            case 2:
+                return new Vec4d(
+                    -this.z * other.getd(1),
+                    this.z * other.getd(0), 
+                    this.x * other.getd(1) - this.y * other.getd(0),
+                    this.w
+                );
+            case 3:
+                return new Vec4d(
+                    this.y * other.getd(2) - this.z * other.getd(1),
+                    this.z * other.getd(0) - this.x * other.getd(2),
+                    this.x * other.getd(1) - this.y * other.getd(0),
+                    this.w
+                );
+            case 4:
+                return new Vec4d(
+                    this.y * other.getd(2) - this.z * other.getd(1),
+                    this.z * other.getd(0) - this.x * other.getd(2),
+                    this.x * other.getd(1) - this.y * other.getd(0),
+                    this.w * other.getd(3)
+                );
+            default:
+                throw new IllegalArgumentException("Vec4d:cross: Other vector must be of dimension 3 or 4");
+        }
     }
 }

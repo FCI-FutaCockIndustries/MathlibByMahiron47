@@ -255,14 +255,31 @@ public class Vec3f implements IVector {
     }
 
     @Override
-    public Vec3f cross(IVector other) {
+    public IVector cross(IVector other) {
         assert other != null : "Vec3f:cross: Other vector cannot be null";
-        assert other.getDimension() == 3 : "Vec3f:cross: Other vector must be of dimension 3";
 
-        return new Vec3f(
-            this.y * other.getf(2) - this.z * other.getf(1),
-            this.z * other.getf(0) - this.x * other.getf(2),
-            this.x * other.getf(1) - this.y * other.getf(0)
-        );
+        switch (other.getDimension()) {
+            case 2:
+                return new Vec3f(
+                    -this.z * other.getf(1),
+                    this.z * other.getf(0),
+                    this.x * other.getf(1) - this.y * other.getf(0)
+                );
+            case 3:
+                return new Vec3f(
+                    this.y * other.getf(2) - this.z * other.getf(1),
+                    this.z * other.getf(0) - this.x * other.getf(2),
+                    this.x * other.getf(1) - this.y * other.getf(0)
+                );
+            case 4:
+                return new Vec4f(
+                    this.y * other.getf(2) - this.z * other.getf(1),
+                    this.z * other.getf(0) - this.x * other.getf(2),
+                    this.x * other.getf(1) - this.y * other.getf(0),
+                    other.getf(3)
+                );
+            default:
+                throw new IllegalArgumentException("Vec3f:cross: Other vector must be of dimension 2 or 3");
+        }
     }
 }

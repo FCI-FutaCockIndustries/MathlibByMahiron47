@@ -1,7 +1,7 @@
 [{
   "modid": "mathlibbymahiron47",
   "name": "Mathlib by Mahiron47",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A library for mathematical operations and utilities.",
   "authors": ["Mahiron47"],
   "logoFile": "assets/mahiro7.png",

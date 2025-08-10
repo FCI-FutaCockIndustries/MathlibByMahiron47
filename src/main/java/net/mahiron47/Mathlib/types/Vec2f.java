@@ -198,8 +198,31 @@ public class Vec2f implements IVector {
     }
 
     @Override
-    public Vec3f cross(IVector other) {
-        float z = this.x * other.getf(1) - this.y * other.getf(0);
-        return new Vec3f(0.0f, 0.0f, z);
+    public IVector cross(IVector other) {
+        assert other != null : "Vec2f:cross: Other vector cannot be null";
+        
+        switch (other.getDimension()) {
+            case 2:
+                return new Vec3f(
+                    0,
+                    0,
+                    this.x * other.getf(1) - this.y * other.getf(0)
+                );
+            case 3:
+                return new Vec3f(
+                    this.y * other.getf(2),
+                    -this.x * other.getf(2),
+                    this.x * other.getf(1) - this.y * other.getf(0)
+                );
+            case 4:
+                return new Vec4f(
+                    this.y * other.getf(2),
+                    -this.x * other.getf(2),
+                    this.x * other.getf(1) - this.y * other.getf(0),
+                    other.getf(3)
+                );
+            default:
+                throw new IllegalArgumentException("Vec2f:cross: Other vector must be of dimension 2 or 3");
+        }
     }
 }
