@@ -1,25 +1,19 @@
 package net.mahiron47.mathlib.utils;
 
-import net.mahiron47.mathlib.types.interfaces.ITensor;
-import net.mahiron47.mathlib.types.interfaces.IVector;
-import net.mahiron47.mathlib.types.Vec2i;
-import net.mahiron47.mathlib.types.Vec2l;
-import net.mahiron47.mathlib.types.Vec2f;
 import net.mahiron47.mathlib.types.Vec2d;
-import net.mahiron47.mathlib.types.Vec3i;
-import net.mahiron47.mathlib.types.Vec3l;
-import net.mahiron47.mathlib.types.Vec3f;
 import net.mahiron47.mathlib.types.Vec3d;
-import net.mahiron47.mathlib.types.Vec;
+import net.mahiron47.mathlib.types.Vec4d;
+import net.mahiron47.mathlib.types.Mat2d;
+import net.mahiron47.mathlib.types.Mat4d;
 
 /**
  * Utility class for performing linear interpolation between values and vectors.
  * 
  * <h2>Methods:</h2>
  * <ul>
- * <li>{@link #mix(double, double, double)}: Interpolates between two double
+ * <li>{@link #linerInterpolation(double, double, double)}: Interpolates between two double
  * values.</li>
- * <li>{@link #mix(IVector, IVector, double)}: Interpolates between two vectors
+ * <li>{@link #linerInterpolation(IVector, IVector, double)}: Interpolates between two vectors
  * of the same type and dimension.</li>
  * </ul>
  */
@@ -28,88 +22,58 @@ public class Interpolation {
 		// Private constructor to prevent instantiation
 	}
 
-	/**
-	 * Performs liner interpolation between two values.
-	 *
-	 * @param a The start value.
-	 * @param b The end value.
-	 * @param t The interpolation factor, typically between 0.0 and 1.0.
-	 * @return The interpolated value between a and b.
-	 */
-	public static double mix(double a, double b, double t) {
-		return a * (1 - t) + b * t;
+	public static double linearI(Vec2d vertexes, double t) {
+		return vertexes.getd(0) + (vertexes.getd(1) - vertexes.getd(0)) * t; // a * (1 - t) + b * t
 	}
 
-	/**
-	 * Performs linear interpolation between two vectors.
-	 *
-	 * @param a The start vector.
-	 * @param b The end vector.
-	 * @param t The interpolation factor, typically between 0.0 and 1.0.
-	 * @return A new vector that is the result of the interpolation.
-	 */
-	public static IVector mix(IVector a, IVector b, double t) {
-		assert a.getDimension() == b.getDimension() : "Interpolation:mix: Dimension mismatch between vectors a and b";
+	public static double bilinearI(Mat2d vertexes, Vec2d t) {
+		double first_linear_interpolation = vertexes.getd(0, 0) + (vertexes.getd(0, 1) - vertexes.getd(0, 0)) * t.getd(0);
+		double second_linear_interpolation = vertexes.getd(1, 0) + (vertexes.getd(1, 1) - vertexes.getd(1, 0)) * t.getd(0);
 
-		switch (a.getType()) {
-		case ITensor.TYPE_INT:
-			int[] intResult = new int[a.getDimension()];
-			for (int i = 0; i < a.getDimension(); i++) {
-				intResult[i] = (int) mix(a.getd(i), b.getd(i), t);
-			}
+		return first_linear_interpolation + (second_linear_interpolation - first_linear_interpolation) * t.getd(1);
+	}
 
-			switch (a.getDimension()) {
-			case 2:
-				return new Vec2i(intResult[0], intResult[1]);
-			case 3:
-				return new Vec3i(intResult[0], intResult[1], intResult[2]);
-			default:
-				return new Vec(intResult, ITensor.TYPE_INT);
-			}
-		case ITensor.TYPE_LONG:
-			long[] longResult = new long[a.getDimension()];
-			for (int i = 0; i < a.getDimension(); i++) {
-				longResult[i] = (long) mix(a.getd(i), b.getd(i), t);
-			}
+	public static double trilinearI(Mat2d up_vertexes, Mat2d down_vertexes, Vec3d t) {
+		double bilinear_interpolation_up = bilinearI(up_vertexes, new Vec2d(t.getd(0), t.getd(1)));
+		double bilinear_interpolation_down = bilinearI(down_vertexes, new Vec2d(t.getd(0), t.getd(1)));
 
-			switch (a.getDimension()) {
-			case 2:
-				return new Vec2l(longResult[0], longResult[1]);
-			case 3:
-				return new Vec3l(longResult[0], longResult[1], longResult[2]);
-			default:
-				return new Vec(longResult, ITensor.TYPE_LONG);
-			}
-		case ITensor.TYPE_FLOAT:
-			float[] floatResult = new float[a.getDimension()];
-			for (int i = 0; i < a.getDimension(); i++) {
-				floatResult[i] = (float) mix(a.getd(i), b.getd(i), t);
-			}
+		return bilinear_interpolation_up + (bilinear_interpolation_down - bilinear_interpolation_up) * t.getd(2);
+	}
 
-			switch (a.getDimension()) {
-			case 2:
-				return new Vec2f(floatResult[0], floatResult[1]);
-			case 3:
-				return new Vec3f(floatResult[0], floatResult[1], floatResult[2]);
-			default:
-				return new Vec(floatResult, ITensor.TYPE_FLOAT);
-			}
-		case ITensor.TYPE_DOUBLE:
-			double[] doubleResult = new double[a.getDimension()];
-			for (int i = 0; i < a.getDimension(); i++) {
-				doubleResult[i] = mix(a.getd(i), b.getd(i), t);
-			}
+	public static double cubicI(Vec4d vertexes, double t) {
+		double a = vertexes.getd(0);
+		double b = vertexes.getd(1);
+		double c = vertexes.getd(2);
+		double d = vertexes.getd(3);
 
-			switch (a.getDimension()) {
-			case 2:
-				return new Vec2d(doubleResult[0], doubleResult[1]);
-			case 3:
-				return new Vec3d(doubleResult[0], doubleResult[1], doubleResult[2]);
-			default:
-				return new Vec(doubleResult, ITensor.TYPE_DOUBLE);
-			}
-		default:
-			throw new IllegalArgumentException("Interpolation:mix2: Unsupported vector type: " + a.getType());
+		return b + 0.5 * (c - a + (2.0 * a - 5.0 * b + 4.0 * c - d + (3.0 * (b - c) + (d - a)) * t) * t) * t;
+	}
+
+	public static double bicubicI(Mat4d vertexes, Vec2d t) {
+		Vec4d cubics = new Vec4d(0.0, 0.0, 0.0, 0.0);
+		for (int i = 0; i < 4; i++) {
+			cubics.set(i, cubicI(new Vec4d(
+				vertexes.getd(i, 0),
+				vertexes.getd(i, 1),
+				vertexes.getd(i, 2),
+				vertexes.getd(i, 3)
+			), t.getd(0)));
 		}
+
+		return cubicI(cubics, t.getd(1));
+	}
+
+	public static double tricubicI(Mat4d up_vertexes, Mat4d up_center_vertexes, Mat4d down_center_vertexes, Mat4d down_vertexes, Vec3d t) {
+		Vec4d bicubics = new Vec4d(0.0, 0.0, 0.0, 0.0);
+		for (int i = 0; i < 4; i++) {
+			bicubics.set(i, bicubicI(new Mat4d(
+				up_vertexes.getd(i, 0), up_vertexes.getd(i, 1), up_vertexes.getd(i, 2), up_vertexes.getd(i, 3),
+				up_center_vertexes.getd(i, 0), up_center_vertexes.getd(i, 1), up_center_vertexes.getd(i, 2), up_center_vertexes.getd(i, 3),
+				down_center_vertexes.getd(i, 0), down_center_vertexes.getd(i, 1), down_center_vertexes.getd(i, 2), down_center_vertexes.getd(i, 3),
+				down_vertexes.getd(i, 0), down_vertexes.getd(i, 1), down_vertexes.getd(i, 2), down_vertexes.getd(i, 3)
+			), new Vec2d(t.getd(0), t.getd(2))));
+		}
+
+		return cubicI(bicubics, t.getd(1));
 	}
 }
