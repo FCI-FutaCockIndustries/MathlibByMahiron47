@@ -4,93 +4,15 @@ import net.mahiron47.mathlib.types.Vec2d;
 import net.mahiron47.mathlib.types.Vec3d;
 import net.mahiron47.mathlib.types.Vec2f;
 import net.mahiron47.mathlib.types.Vec3f;
+import net.mahiron47.mathlib.types.Vec4d;
+import net.mahiron47.mathlib.types.Vec4f;
 
 /**
  * Utility class for generating pseudo-random noise values using sine functions.
- * 
- * <h2>Methods:</h2>
- * <ul>
- * <li>{@link #fract(double)}: Computes the fractional part of a double
- * value.</li>
- * <li>{@link #sinoise(double)}: Generates 1D sine noise based on a single
- * input.</li>
- * <li>{@link #sinoise(double, double)}: Generates 2D sine noise based on two
- * inputs.</li>
- * <li>{@link #sinoise(double, double, double)}: Generates 3D sine noise based
- * on three inputs.</li>
- * <li>{@link #sinoise(double, double, double, double)}: Generates 4D sine noise
- * based on four inputs.</li>
- * </ul>
  */
 public class Noise {
 	private Noise() {
 		// Private constructor to prevent instantiation
-	}
-
-	/**
-	 * Returns the fractional part of a double value.
-	 *
-	 * @param x The input value.
-	 * @return The fractional part of x.
-	 */
-	public static double fract(double x) {
-		if (x >= 0) {
-			return x - Math.floor(x);
-		} else {
-			return 1.0 + (x - Math.floor(x));
-		}
-	}
-
-	public static float fract(float x) {
-		if (x >= 0) {
-			return x - (float) Math.floor(x);
-		} else {
-			return 1.0f + (x - (float) Math.floor(x));
-		}
-	}
-
-	private static Vec2d hash(Vec2d x) {
-		Vec2d p = new Vec2d(Math.floor(x.getd(0) * 0.5), Math.floor(x.getd(1) * 0.5));
-		p = new Vec2d(p.dotd(new Vec2d(127.1, 311.7)), p.dotd(new Vec2d(269.5, 183.3)));
-
-		return new Vec2d(
-			-1.0 + 2.0 * fract(Math.sin(p.getd(0)) * 43758.5453123),
-			-1.0 + 2.0 * fract(Math.sin(p.getd(1)) * 43758.5453123)
-		);
-	}
-
-	private static Vec2f hash(Vec2f x) {
-		Vec2f p = new Vec2f((float) Math.floor(x.getf(0) * 0.5f), (float) Math.floor(x.getf(1) * 0.5f));
-		p = new Vec2f(p.dotf(new Vec2f(127.1f, 311.7f)), p.dotf(new Vec2f(269.5f, 183.3f)));
-
-		return new Vec2f(
-			-1.0f + 2.0f * fract((float) Math.sin(p.getf(0)) * 43758.5453123f),
-			-1.0f + 2.0f * fract((float) Math.sin(p.getf(1)) * 43758.5453123f)
-		);
-	}
-
-	private static double step(double edge, double x) {
-		return x < edge ? 0.0 : 1.0;
-	}
-
-	private static float step(float edge, float x) {
-		return x < edge ? 0.0f : 1.0f;
-	}
-
-	private static Vec3d max(Vec3d v, double value) {
-		return new Vec3d(
-			Math.max(v.getd(0), value),
-			Math.max(v.getd(1), value),
-			Math.max(v.getd(2), value)
-		);
-	}
-
-	private static Vec3f max(Vec3f v, float value) {
-		return new Vec3f(
-			Math.max(v.getf(0), value),
-			Math.max(v.getf(1), value),
-			Math.max(v.getf(2), value)
-		);
 	}
 
 	/**
@@ -100,7 +22,16 @@ public class Noise {
 	 * @return A pseudo-random noise value between 0.0 and 1.0.
 	 */
 	public static double sinoise(double p) {
-		return fract(Math.sin(p * 495119) * 499509);
+		return Math.fract(Math.sin(p * 495119) * 499509);
+	}
+
+	/**
+	 * Generates a 1D sin noise value based on the input x.
+	 * @param p The input value.
+	 * @return A pseudo-random noise value between 0.0 and 1.0.
+	 */
+	public static float sinoise(float p) {
+		return Math.fract(Math.sin(p * 495119) * 499509);
 	}
 
 	/**
@@ -111,7 +42,16 @@ public class Noise {
 	 * @return A pseudo-random noise value between 0.0 and 1.0.
 	 */
 	public static double sinoise(Vec2d p) {
-		return fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109) * 499509);
+		return Math.fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109) * 499509);
+	}
+
+	/**
+	 * Generates a 2D sin noise value based on the input vector.
+	 * @param p The input Vec2f.
+	 * @return A pseudo-random noise value between 0.0 and 1.0.
+	 */
+	public static float sinoise(Vec2f p) {
+		return Math.fract(Math.sin(p.getf(0) * 495119 + p.getf(1) * 494109) * 499509);
 	}
 
 	/**
@@ -123,7 +63,16 @@ public class Noise {
 	 * @return A pseudo-random noise value between 0.0 and 1.0.
 	 */
 	public static double sinoise(Vec3d p) {
-		return fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109 + p.getd(2) * 549161) * 499509);
+		return Math.fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109 + p.getd(2) * 549161) * 499509);
+	}
+
+	/**
+	 * Generates a 3D sin noise value based on the input vector.
+	 * @param p The input Vec3f.
+	 * @return A pseudo-random noise value between 0.0 and 1.0.
+	 */
+	public static float sinoise(Vec3f p) {
+		return Math.fract(Math.sin(p.getf(0) * 495119 + p.getf(1) * 494109 + p.getf(2) * 549161) * 499509);
 	}
 
 	/**
@@ -135,59 +84,361 @@ public class Noise {
 	 * @param w The w coordinate.
 	 * @return A pseudo-random noise value between 0.0 and 1.0.
 	 */
+	/**
+	 * Generates a 4D sin noise value based on the input vector and w.
+	 * @param p The input Vec3d.
+	 * @param w The w coordinate.
+	 * @return A pseudo-random noise value between 0.0 and 1.0.
+	 */
 	public static double sinoise(Vec3d p, double w) {
-		return fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109 + p.getd(2) * 549161 + w * 547967) * 499509);
+		return Math.fract(Math.sin(p.getd(0) * 495119 + p.getd(1) * 494109 + p.getd(2) * 549161 + w * 547967) * 499509);
 	}
 
+	/**
+	 * Generates a 4D sin noise value based on the input vector and w.
+	 * @param p The input Vec3f.
+	 * @param w The w coordinate.
+	 * @return A pseudo-random noise value between 0.0 and 1.0.
+	 */
+	public static float sinoise(Vec3f p, float w) {
+		return Math.fract(Math.sin(p.getf(0) * 495119 + p.getf(1) * 494109 + p.getf(2) * 549161 + w * 547967) * 499509);
+	}
+
+	/**
+	 * Generates a 2D simplex noise value based on the input vector.
+	 *
+	 * @param p The input vector.
+	 * @return A pseudo-random noise value between -1.0 and 1.0.
+	 */
 	public static double simplexNoise(Vec2d p) {
-		double K1 = 0.366025404; // (sqrt(3)-1)/2;
-		double K2 = 0.211324865; // (3-sqrt(3))/6;
+		double F = 0.366025404; // (sqrt(2 + 1) - 1) / 2;
+		double G = 0.211324865; // (3 - sqrt(3)) / 6;
 
-		Vec2d i = new Vec2d(
-			Math.floor(p.getd(0) + (p.getd(0) + p.getd(1)) * K1),
-			Math.floor(p.getd(1) + (p.getd(0) + p.getd(1)) * K1)
+		// Shift the input position to the simplex grid
+		double pos_factor = (p.getd(0) + p.getd(1)) * F;
+		Vec2d shift_pos = new Vec2d(
+			p.getd(0) + pos_factor,
+			p.getd(1) + pos_factor
 		);
-		Vec2d a = p.subtract(i).add(new Vec2d((i.getd(0) + i.getd(1)) * K2, (i.getd(0) + i.getd(1)) * K2));
-		double m = step(a.getd(1), a.getd(0));
-		Vec2d o = new Vec2d(m, 1.0 - m);
-		Vec2d b = a.subtract(o).add(new Vec2d(K2, K2));
-		Vec2d c = a.subtract(new Vec2d(
-			1.0 + 2.0 * K2,
-			1.0 + 2.0 * K2)
+		// Skew the input space to determine which simplex cell we're in
+		Vec2d cell_pos = Math.floor(shift_pos);
+
+		// Unskew the cell origin back to (x,y) space
+		double pos_refactor = (cell_pos.getd(0) + cell_pos.getd(1)) * G;
+		Vec2d cell_origin_pos = new Vec2d (
+			cell_pos.getd(0) - pos_refactor,
+			cell_pos.getd(1) - pos_refactor
 		);
-		Vec3d h = max(new Vec3d(0.5, 0.5, 0.5).subtract(o), 0.0);
-		Vec3d n = h.cross(h).cross(h).cross(h).cross(new Vec3d(
-			a.dotd(hash(i)),
-			b.dotd(hash(i.add(o))),
-			c.dotd(hash(i.add(new Vec2d(1.0, 1.0))))
+		// Calculate the distances from the cell origin to the input position
+		Vec2d first_offset_cell_origin_distances = p.subtract(cell_origin_pos);
+
+		// For the 2D case, the simplex shape is an equilateral triangle.
+		// Determine which simplex we are in.
+		Vec2d simplex_vertex_indices;
+		if (first_offset_cell_origin_distances.getd(0) > first_offset_cell_origin_distances.getd(1)) {
+			simplex_vertex_indices = new Vec2d(1.0, 0.0);
+		} else {
+			simplex_vertex_indices = new Vec2d(0.0, 1.0);
+		}
+
+		// Calculate the distances from the cell origin to the simplex vertexes
+		Vec2d second_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(simplex_vertex_indices).add(new Vec2d(G, G));
+		double _const = 2.0 * G;
+		Vec2d third_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(new Vec2d(1.0, 1.0)).add(new Vec2d(_const, _const));
+
+		Vec3d simplex_factor = new Vec3d(0.5, 0.5, 0.5).subtract(new Vec3d(
+			first_offset_cell_origin_distances.dotd(first_offset_cell_origin_distances), 
+			second_offset_cell_origin_distances.dotd(second_offset_cell_origin_distances), 
+			third_offset_cell_origin_distances.dotd(third_offset_cell_origin_distances)
 		));
+		// Noise contributions from the corners
+		Vec3d vertexes_contribution = new Vec3d(0.0, 0.0, 0.0);
+		// Calculate the contribution from the corners
+		if (simplex_factor.getd(0) > 0.0) {
+			simplex_factor.set(0, simplex_factor.getd(0) * simplex_factor.getd(0));
+			vertexes_contribution.set(0, simplex_factor.getd(0) * simplex_factor.getd(0) * Math.grad((int) Math.floor(sinoise(cell_pos) * 1000), first_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getd(1) > 0.0) {
+			simplex_factor.set(1, simplex_factor.getd(1) * simplex_factor.getd(1));
+			vertexes_contribution.set(1, simplex_factor.getd(1) * simplex_factor.getd(1) * Math.grad((int) Math.floor(sinoise(cell_pos.add(simplex_vertex_indices)) * 1000), second_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getd(2) > 0.0) {
+			simplex_factor.set(2, simplex_factor.getd(2) * simplex_factor.getd(2));
+			vertexes_contribution.set(2, simplex_factor.getd(2) * simplex_factor.getd(2) * Math.grad((int) Math.floor(sinoise(cell_pos.add(new Vec2d(1.0, 1.0))) * 1000), third_offset_cell_origin_distances));
+		}
 
-		return n.dotd(new Vec3d(70.0, 70.0, 70.0));
+		return vertexes_contribution.dotd(new Vec3d(40.0, 40.0, 40.0));
 	}
 
+	/**
+	 * Generates a 2D simplex noise value based on the input vector.
+	 *
+	 * @param p The input vector.
+	 * @return A pseudo-random noise value between -1.0 and 1.0.
+	 */
 	public static float simplexNoise(Vec2f p) {
-		float K1 = 0.366025404f; // (sqrt(3)-1)/2;
-		float K2 = 0.211324865f; // (3-sqrt(3))/6;
+		float F = 0.366025404f; // (sqrt(2 + 1) - 1) / 2;
+		float G = 0.211324865f; // (3 - sqrt(3)) / 6;
 
-		Vec2f i = new Vec2f(
-			(float) Math.floor(p.getf(0) + (p.getf(0) + p.getf(1)) * K1),
-			(float) Math.floor(p.getf(1) + (p.getf(0) + p.getf(1)) * K1)
+		// Shift the input position to the simplex grid
+		float pos_factor = (p.getf(0) + p.getf(1)) * F;
+		Vec2f shift_pos = new Vec2f(
+			p.getf(0) + pos_factor,
+			p.getf(1) + pos_factor
 		);
-		Vec2f a = p.subtract(i).add(new Vec2f((i.getf(0) + i.getf(1)) * K2, (i.getf(0) + i.getf(1)) * K2));
-		float m = step(a.getf(1), a.getf(0));
-		Vec2f o = new Vec2f(m, 1.0f - m);
-		Vec2f b = a.subtract(o).add(new Vec2f(K2, K2));
-		Vec2f c = a.subtract(new Vec2f(
-			1.0f + 2.0f * K2,
-			1.0f + 2.0f * K2
-		));
-		Vec3f h = max(new Vec3f(0.5f, 0.5f, 0.5f).subtract(o), 0.0f);
-		Vec3f n = h.cross(h).cross(h).cross(h).cross(new Vec3f(
-			a.dotf(hash(i)),
-			b.dotf(hash(i.add(o))),
-			c.dotf(hash(i.add(new Vec2f(1.0f, 1.0f))))
-		));
+		// Skew the input space to determine which simplex cell we're in
+		Vec2f cell_pos = Math.floor(shift_pos);
 
-		return n.dotf(new Vec3f(70.0f, 70.0f, 70.0f));
+		// Unskew the cell origin back to (x,y) space
+		float pos_refactor = (cell_pos.getf(0) + cell_pos.getf(1)) * G;
+		Vec2f cell_origin_pos = new Vec2f (
+			cell_pos.getf(0) - pos_refactor,
+			cell_pos.getf(1) - pos_refactor
+		);
+		// Calculate the distances from the cell origin to the input position
+		Vec2f first_offset_cell_origin_distances = p.subtract(cell_origin_pos);
+
+		// For the 2D case, the simplex shape is an equilateral triangle.
+		// Determine which simplex we are in.
+		Vec2f simplex_vertex_indices;
+		if (first_offset_cell_origin_distances.getf(0) > first_offset_cell_origin_distances.getf(1)) {
+			simplex_vertex_indices = new Vec2f(1.0f, 0.0f);
+		} else {
+			simplex_vertex_indices = new Vec2f(0.0f, 1.0f);
+		}
+
+		// Calculate the distances from the cell origin to the simplex vertexes
+		Vec2f second_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(simplex_vertex_indices).add(new Vec2f(G, G));
+		float _const = 2.0f * G;
+		Vec2f third_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(new Vec2f(1.0f, 1.0f)).add(new Vec2f(_const, _const));
+
+		Vec3f simplex_factor = new Vec3f(0.5f, 0.5f, 0.5f).subtract(new Vec3f(
+			first_offset_cell_origin_distances.dotf(first_offset_cell_origin_distances),
+			second_offset_cell_origin_distances.dotf(second_offset_cell_origin_distances),
+			third_offset_cell_origin_distances.dotf(third_offset_cell_origin_distances)
+		));
+		// Noise contributions from the corners
+		Vec3f vertexes_contribution = new Vec3f(0.0f, 0.0f, 0.0f);
+		// Calculate the contribution from the corners
+		if (simplex_factor.getf(0) > 0.0f) {
+			simplex_factor.set(0, simplex_factor.getf(0) * simplex_factor.getf(0));
+			vertexes_contribution.set(0, simplex_factor.getf(0) * simplex_factor.getf(0) * Math.grad((int) Math.floor(sinoise(cell_pos) * 1000), first_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getf(1) > 0.0f) {
+			simplex_factor.set(1, simplex_factor.getf(1) * simplex_factor.getf(1));
+			vertexes_contribution.set(1, simplex_factor.getf(1) * simplex_factor.getf(1) * Math.grad((int) Math.floor(sinoise(cell_pos.add(simplex_vertex_indices)) * 1000), second_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getf(2) > 0.0f) {
+			simplex_factor.set(2, simplex_factor.getf(2) * simplex_factor.getf(2));
+			vertexes_contribution.set(2, simplex_factor.getf(2) * simplex_factor.getf(2) * Math.grad((int) Math.floor(sinoise(cell_pos.add(new Vec2f(1.0f, 1.0f))) * 1000), third_offset_cell_origin_distances));
+		}
+
+		return vertexes_contribution.dotf(new Vec3f(40.0f, 40.0f, 40.0f));
+	}
+
+	/**
+	 * Generates a 3D simplex noise value based on the input vector.
+	 * @param p The input Vec3d.
+	 * @return A pseudo-random noise value between -1.0 and 1.0.
+	 */
+	public static double simplexNoise(Vec3d p) {
+		double F = 0.333333333; // (sqrt(3 + 1) - 1) / 3;
+		double G = 0.166666667; // (4 - sqrt(4)) / 12;
+
+		// Shift the input position to the simplex grid
+		double pos_factor = (p.getd(0) + p.getd(1) + p.getd(2)) * F;
+		Vec3d shift_pos = new Vec3d(
+			p.getd(0) + pos_factor,
+			p.getd(1) + pos_factor,
+			p.getd(2) + pos_factor
+		);
+		// Skew the input space to determine which simplex cell we're in
+		Vec3d cell_pos = Math.floor(shift_pos);
+
+		// Unskew the cell origin back to (x,y,z) space
+		double pos_refactor = (cell_pos.getd(0) + cell_pos.getd(1) + cell_pos.getd(2)) * G;
+		Vec3d cell_origin_pos = new Vec3d(
+			cell_pos.getd(0) - pos_refactor,
+			cell_pos.getd(1) - pos_refactor,
+			cell_pos.getd(2) - pos_refactor
+		);
+		// Calculate the distances from the cell origin to the input position
+		Vec3d first_offset_cell_origin_distances = p.subtract(cell_origin_pos);
+
+		// For the 3D case, the simplex shape is a slightly irregular tetrahedron.
+		// Determine which simplex we are in.
+		Vec3d first_simplex_vertex_indices;
+		Vec3d second_simplex_vertex_indices;
+		if (first_offset_cell_origin_distances.getd(0) > first_offset_cell_origin_distances.getd(1)) {
+			if (first_offset_cell_origin_distances.getd(0) > first_offset_cell_origin_distances.getd(2)) {
+				first_simplex_vertex_indices = new Vec3d(1.0, 0.0, 0.0);
+				if (first_offset_cell_origin_distances.getd(1) > first_offset_cell_origin_distances.getd(2)) {
+					second_simplex_vertex_indices = new Vec3d(0.0, 1.0, 0.0);
+				} else {
+					second_simplex_vertex_indices = new Vec3d(0.0, 0.0, 1.0);
+				}
+			} else {
+				first_simplex_vertex_indices = new Vec3d(0.0, 0.0, 1.0);
+				if (first_offset_cell_origin_distances.getd(1) > first_offset_cell_origin_distances.getd(2)) {
+					second_simplex_vertex_indices = new Vec3d(0.0, 1.0, 0.0);
+				} else {
+					second_simplex_vertex_indices = new Vec3d(0.0, 0.0, 1.0);
+				}
+			}
+		} else {
+			if (first_offset_cell_origin_distances.getd(1) > first_offset_cell_origin_distances.getd(2)) {
+				first_simplex_vertex_indices = new Vec3d(0.0, 1.0, 0.0);
+				if (first_offset_cell_origin_distances.getd(0) > first_offset_cell_origin_distances.getd(2)) {
+					second_simplex_vertex_indices = new Vec3d(1.0, 0.0, 0.0);
+				} else {
+					second_simplex_vertex_indices = new Vec3d(0.0, 0.0, 1.0);
+				}
+			} else {
+				first_simplex_vertex_indices = new Vec3d(0.0, 0.0, 1.0);
+				if (first_offset_cell_origin_distances.getd(0) > first_offset_cell_origin_distances.getd(1)) {
+					second_simplex_vertex_indices = new Vec3d(1.0, 0.0, 0.0);
+				} else {
+					second_simplex_vertex_indices = new Vec3d(0.0, 1.0, 0.0);
+				}
+			}
+		}
+
+		// Calculate the distances from the cell origin to the simplex vertexes
+		Vec3d second_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(first_simplex_vertex_indices).add(new Vec3d(G, G, G));
+		double first_const = 2.0 * G;
+		Vec3d third_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(second_simplex_vertex_indices).add(new Vec3d(first_const, first_const, first_const));
+		double second_const = 3.0 * G;
+		Vec3d fourth_offset_cell_origin_distances = second_offset_cell_origin_distances.subtract(new Vec3d(1.0, 1.0, 1.0)).add(new Vec3d(second_const, second_const, second_const));
+
+		Vec4d simplex_factor = new Vec4d(0.5, 0.5, 0.5, 0.5).subtract(new Vec4d(
+			first_offset_cell_origin_distances.dotd(first_offset_cell_origin_distances),
+			second_offset_cell_origin_distances.dotd(second_offset_cell_origin_distances),
+			third_offset_cell_origin_distances.dotd(third_offset_cell_origin_distances),
+			fourth_offset_cell_origin_distances.dotd(fourth_offset_cell_origin_distances)
+		));
+		// Noise contributions from the corners
+		Vec4d vertexes_contribution = new Vec4d(0.0, 0.0, 0.0, 0.0);
+		// Calculate the contribution from the corners
+		if (simplex_factor.getd(0) > 0.0) {
+			simplex_factor.set(0, simplex_factor.getd(0) * simplex_factor.getd(0));
+			vertexes_contribution.set(0, simplex_factor.getd(0) * simplex_factor.getd(0) * Math.grad((int) Math.floor(sinoise(cell_pos) * 1000), first_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getd(1) > 0.0) {
+			simplex_factor.set(1, simplex_factor.getd(1) * simplex_factor.getd(1));
+			vertexes_contribution.set(1, simplex_factor.getd(1) * simplex_factor.getd(1) * Math.grad((int) Math.floor(sinoise(cell_pos.add(first_simplex_vertex_indices)) * 1000), second_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getd(2) > 0.0) {
+			simplex_factor.set(2, simplex_factor.getd(2) * simplex_factor.getd(2));
+			vertexes_contribution.set(2, simplex_factor.getd(2) * simplex_factor.getd(2) * Math.grad((int) Math.floor(sinoise(cell_pos.add(second_simplex_vertex_indices)) * 1000), third_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getd(3) > 0.0) {
+			simplex_factor.set(3, simplex_factor.getd(3) * simplex_factor.getd(3));
+			vertexes_contribution.set(3, simplex_factor.getd(3) * simplex_factor.getd(3) * Math.grad((int) Math.floor(sinoise(cell_pos.add(new Vec3d(1.0, 1.0, 1.0))) * 1000), fourth_offset_cell_origin_distances));
+		}
+
+		return vertexes_contribution.dotd(new Vec4d(40.0, 40.0, 40.0, 40.0));
+	}
+
+	/**
+	 * Generates a 3D simplex noise value based on the input vector.
+	 * @param p The input Vec3f.
+	 * @return A pseudo-random noise value between -1.0 and 1.0.
+	 */
+	public static float simplexNoise(Vec3f p) {
+		float F = 0.333333333f; // (sqrt(3 + 1) - 1) / 3;
+		float G = 0.166666667f; // (4 - sqrt(4)) / 12;
+
+		// Shift the input position to the simplex grid
+		float pos_factor = (p.getf(0) + p.getf(1) + p.getf(2)) * F;
+		Vec3f shift_pos = new Vec3f(
+			p.getf(0) + pos_factor,
+			p.getf(1) + pos_factor,
+			p.getf(2) + pos_factor
+		);
+		// Skew the input space to determine which simplex cell we're in
+		Vec3f cell_pos = Math.floor(shift_pos);
+
+		// Unskew the cell origin back to (x,y,z) space
+		float pos_refactor = (cell_pos.getf(0) + cell_pos.getf(1) + cell_pos.getf(2)) * G;
+		Vec3f cell_origin_pos = new Vec3f(
+			cell_pos.getf(0) - pos_refactor,
+			cell_pos.getf(1) - pos_refactor,
+			cell_pos.getf(2) - pos_refactor
+		);
+		// Calculate the distances from the cell origin to the input position
+		Vec3f first_offset_cell_origin_distances = p.subtract(cell_origin_pos);
+
+		// For the 3D case, the simplex shape is a slightly irregular tetrahedron.
+		// Determine which simplex we are in.
+		Vec3f first_simplex_vertex_indices;
+		Vec3f second_simplex_vertex_indices;
+		if (first_offset_cell_origin_distances.getf(0) > first_offset_cell_origin_distances.getf(1)) {
+			if (first_offset_cell_origin_distances.getf(0) > first_offset_cell_origin_distances.getf(2)) {
+				first_simplex_vertex_indices = new Vec3f(1.0f, 0.0f, 0.0f);
+				if (first_offset_cell_origin_distances.getf(1) > first_offset_cell_origin_distances.getf(2)) {
+					second_simplex_vertex_indices = new Vec3f(0.0f, 1.0f, 0.0f);
+				} else {
+					second_simplex_vertex_indices = new Vec3f(0.0f, 0.0f, 1.0f);
+				}
+			} else {
+				first_simplex_vertex_indices = new Vec3f(0.0f, 0.0f, 1.0f);
+				if (first_offset_cell_origin_distances.getf(1) > first_offset_cell_origin_distances.getf(2)) {
+					second_simplex_vertex_indices = new Vec3f(0.0f, 1.0f, 0.0f);
+				} else {
+					second_simplex_vertex_indices = new Vec3f(0.0f, 0.0f, 1.0f);
+				}
+			}
+		}
+		else {
+			if (first_offset_cell_origin_distances.getf(1) > first_offset_cell_origin_distances.getf(2)) {
+				first_simplex_vertex_indices = new Vec3f(0.0f, 1.0f, 0.0f);
+				if (first_offset_cell_origin_distances.getf(0) > first_offset_cell_origin_distances.getf(2)) {
+					second_simplex_vertex_indices = new Vec3f(1.0f, 0.0f, 0.0f);
+				} else {
+					second_simplex_vertex_indices = new Vec3f(0.0f, 0.0f, 1.0f);
+				}
+			} else {
+				first_simplex_vertex_indices = new Vec3f(0.0f, 0.0f, 1.0f);
+				if (first_offset_cell_origin_distances.getf(0) > first_offset_cell_origin_distances.getf(1)) {
+					second_simplex_vertex_indices = new Vec3f(1.0f, 0.0f, 0.0f);
+				} else {
+					second_simplex_vertex_indices = new Vec3f(0.0f, 1.0f, 0.0f);
+				}
+			}
+		}
+
+		Vec3f second_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(first_simplex_vertex_indices).add(new Vec3f(G, G, G));
+		float first_const = 2.0f * G;
+		Vec3f third_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(second_simplex_vertex_indices).add(new Vec3f(first_const, first_const, first_const));
+		float second_const = 3.0f * G;
+		Vec3f fourth_offset_cell_origin_distances = first_offset_cell_origin_distances.subtract(new Vec3f(1.0f, 1.0f, 1.0f)).add(new Vec3f(second_const, second_const, second_const));
+
+		Vec4f simplex_factor = new Vec4f(0.5f, 0.5f, 0.5f, 0.5f).subtract(new Vec4f(
+			first_offset_cell_origin_distances.dotf(first_offset_cell_origin_distances),
+			second_offset_cell_origin_distances.dotf(second_offset_cell_origin_distances),
+			third_offset_cell_origin_distances.dotf(third_offset_cell_origin_distances),
+			fourth_offset_cell_origin_distances.dotf(fourth_offset_cell_origin_distances)
+		));
+		// Noise contributions from the corners
+		Vec4f vertexes_contribution = new Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+		// Calculate the contribution from the corners
+		if (simplex_factor.getf(0) > 0.0f) {
+			simplex_factor.set(0, simplex_factor.getf(0) * simplex_factor.getf(0));
+			vertexes_contribution.set(0, simplex_factor.getf(0) * simplex_factor.getf(0) * Math.grad((int) Math.floor(sinoise(cell_pos) * 1000), first_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getf(1) > 0.0f) {
+			simplex_factor.set(1, simplex_factor.getf(1) * simplex_factor.getf(1));
+			vertexes_contribution.set(1, simplex_factor.getf(1) * simplex_factor.getf(1) * Math.grad((int) Math.floor(sinoise(cell_pos.add(first_simplex_vertex_indices)) * 1000), second_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getf(2) > 0.0f) {
+			simplex_factor.set(2, simplex_factor.getf(2) * simplex_factor.getf(2));
+			vertexes_contribution.set(2, simplex_factor.getf(2) * simplex_factor.getf(2) * Math.grad((int) Math.floor(sinoise(cell_pos.add(second_simplex_vertex_indices)) * 1000), third_offset_cell_origin_distances));
+		}
+		if (simplex_factor.getf(3) > 0.0f) {
+			simplex_factor.set(3, simplex_factor.getf(3) * simplex_factor.getf(3));
+			vertexes_contribution.set(3, simplex_factor.getf(3) * simplex_factor.getf(3) * Math.grad((int) Math.floor(sinoise(cell_pos.add(new Vec3f(1.0f, 1.0f, 1.0f))) * 1000), fourth_offset_cell_origin_distances));
+		}
+
+		return vertexes_contribution.dotf(new Vec4f(40.0f, 40.0f, 40.0f, 40.0f));
 	}
 }
